@@ -1,0 +1,25 @@
+// 自动生成模板 {{.StructName}}
+// Package {{.PackageName}}
+// @description <TODO description class purpose>
+// @author {{.Author}}
+// @File: {{.FileName}}
+// @version 1.0.0
+// @create {{.DateTime}}
+package {{.PackageName}}
+
+import (
+    "time"
+)
+
+// {{.StructName}} 结构体
+
+type {{.StructName}} struct {
+    {{range .Columns}}
+        {{.Code}} {{.Type}} `json:"{{.JsonField}}" form:"{{.JsonField}}" gorm:"column:{{.Code}};comment:{{.Name}};{{if .Size}} size:{{.Size}}; {{end}}"`
+    {{end}}
+}
+
+// TableName {{.StructName}} 表名
+func ({{.StructName}}) TableName() string {
+  return "{{.Code}}"
+}

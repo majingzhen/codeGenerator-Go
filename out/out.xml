@@ -2,17 +2,17 @@
 <MDB>
 	 <Module> Name="信息模块" Code="bi">
     <Table Name="信息测试" Code="BI_TEST" HtmlPkg="bi/bitest" GoPkg="bi.bitest" DBCreator="Administrator" Comment="BI的测试">
-      <Column Name="主键" Code="ID" Size="32" Required="true"/>
-      <Column Name="姓名" Code="TEST_NAME" Size="128"/>
-      <Column Name="性别" Code="GENDER" Size="8"/>
-      <Column Name="备注" Code="REMARK" Size="2048"/>
-      <Column Name="出生日期" Code="BIRTH"/>
-      <Column Name="创建时间" Code="CREATE_TIME"/>
+      <Column Name="主键" Code="ID" Type="VARCHAR" Size="32" Required="true"/>
+      <Column Name="姓名" Code="TEST_NAME" Type="VARCHAR" Size="128"/>
+      <Column Name="性别" Code="GENDER" Type="INT" Size="8"/>
+      <Column Name="备注" Code="REMARK" Type="TEXT" Size="256"/>
+      <Column Name="出生日期" Code="BIRTH" Type="DATE"/>
+      <Column Name="创建时间" Code="CREATE_TIME" Type="DATETIME"/>
     </Table>
   </Module>
 	 <Module> Name="权限模块" Code="oa">
     <Table Name="权限测试" Code="OA_TEST" HtmlPkg="oa/oatest" GoPkg="oa.oatest" DBCreator="Administrator">
-      <Column Name="主键" Code="ID" Comment="UUID" Size="32" Required="true"/>
+      <Column Name="主键" Code="ID" Comment="UUID" Type="VARCHAR" Size="32" Required="true"/>
     </Table>
   </Module>
 </MDB>
