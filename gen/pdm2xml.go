@@ -157,7 +157,7 @@ func Pdm2xml(pdmPath string, isPack bool) {
 									if columnNodeAttr.Tag == "Comment" {
 										addAttr(&newXML, "Comment", columnNodeAttr.Text())
 									}
-									if columnNodeAttr.Tag == "a:DataType" {
+									if columnNodeAttr.Tag == "DataType" {
 										columnType = strings.ToUpper(columnNodeAttr.Text())
 										if strings.Contains(columnType, "(") {
 											columnType = columnType[0:strings.Index(columnType, "(")]
