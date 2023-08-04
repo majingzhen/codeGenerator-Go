@@ -1,0 +1,16 @@
+// Package {{.PackageName}} 自动生成模板 {{.StructName}}
+// @description <TODO description class purpose>
+// @author {{.Author}}
+// @File: {{.FileName}}
+// @version 1.0.0
+// @create {{.DateTime}}
+package {{.PackageName}}
+
+// {{.StructName}}View 结构体
+
+type {{.StructName}}View struct {
+    {{range .Table.Columns}}
+        {{.FieldName}} {{if eq .FieldType "time.Time"}} string {{else}} {{.FieldType}} {{end}} `json:"{{.JsonField}}"`
+    {{end}}
+}
+

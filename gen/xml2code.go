@@ -1,13 +1,12 @@
 package gen
 
 import (
+	"codeGenerator-Go/utils"
 	"encoding/xml"
 	"fmt"
-	"go-gen2pdm/utils"
 	"html/template"
 	"os"
 	"strings"
-	"time"
 )
 
 type MDB struct {
@@ -24,19 +23,26 @@ type Module struct {
 }
 
 type Table struct {
-	XMLName     xml.Name `xml:"Table"`
-	Name        string   `xml:"Name,attr"`
-	Code        string   `xml:"Code,attr"`
-	HtmlPkg     string   `xml:"HtmlPkg,attr"`
-	GoPkg       string   `xml:"GoPkg,attr"`
-	DBCreator   string   `xml:"DBCreator,attr"`
-	Comment     string   `xml:"Comment,attr"`
-	Columns     []Column `xml:"Column"`
+	XMLName   xml.Name `xml:"Table"`
+	Name      string   `xml:"Name,attr"`
+	Code      string   `xml:"Code,attr"`
+	HtmlPkg   string   `xml:"HtmlPkg,attr"`
+	GoPkg     string   `xml:"GoPkg,attr"`
+	DBCreator string   `xml:"DBCreator,attr"`
+	Comment   string   `xml:"Comment,attr"`
+	Columns   []Column `xml:"Column"`
+}
+
+type TemplateModel struct {
+	Table       *Table
 	Author      string
 	FileName    string
 	PackageName string
 	StructName  string
+	ObjectName  string
 	DateTime    string
+	ProjectName string
+	ModuleName  string
 }
 
 type Column struct {
@@ -51,6 +57,8 @@ type Column struct {
 	JsonField string
 }
 
+var projectName = "codeGenerator-Go"
+
 func Xml2Code(xmlFilePath string) {
 	// xml 解析为实体
 	file, err := os.ReadFile(xmlFilePath)
@@ -62,41 +70,67 @@ func Xml2Code(xmlFilePath string) {
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
+	// 生成model
+	genCode(v, "./tmpl/model.tmpl", "model", "", "", false)
+	genCode(v, "./tmpl/dao.tmpl", "model", "dao", "", false)
+	genCode(v, "./tmpl/dao_init.tmpl", "model", "", "", true)
 
-	model, err := os.ReadFile("./tmpl/model.tmpl")
-	if err != nil {
-		fmt.Printf("error:%v\n", err)
-	}
-	template, err := template.New("model").Parse(string(model))
-	if err != nil {
-		fmt.Printf("error:%v\n", err)
-	}
+	// 生成service
+	genCode(v, "./tmpl/service.tmpl", "service", "service", "", false)
+	genCode(v, "./tmpl/service_init.tmpl", "service", "", "", true)
+	genCode(v, "./tmpl/view.tmpl", "view", "view", "service", false)
+	genCode(v, "./tmpl/view_page.tmpl", "view", "view_page", "service", false)
+	genCode(v, "./tmpl/view_utils.tmpl", "view", "view_utils", "service", false)
+	genCode(v, "./tmpl/view_init.tmpl", "view", "", "service", true)
+	// 生成api
+	genCode(v, "./tmpl/api.tmpl", "api", "api", "", false)
+	genCode(v, "./tmpl/api_init.tmpl", "api", "", "", true)
 
-	for i := 0; i < len(v.Modules); i++ {
-		module := &v.Modules[i]
-		handleTable(module.Tables, module, template)
-	}
+	// 生成router
+	genCode(v, "./tmpl/router.tmpl", "router", "router", "", false)
 
 }
 
-func handleTable(tables []Table, module *Module, template *template.Template) {
-	currentTime := time.Now()
-	formattedTime := currentTime.Format("2006-01-02 15:04:05")
+func genCode(v MDB, tmplFile string, modelName, suffix string, appendPage string, isInit bool) {
+	model, err := os.ReadFile(tmplFile)
+	if err != nil {
+		fmt.Printf("error:%v\n", err)
+	}
+	template, err := template.New(modelName).Parse(string(model))
+	if err != nil {
+		fmt.Printf("error:%v\n", err)
+	}
+	for _, module := range v.Modules {
+		handleTable(&module, template, modelName, suffix, appendPage, isInit)
+	}
+}
+
+func handleTable(module *Module, template *template.Template, modelName, suffix string, appendPage string, isInit bool) {
+	tables := module.Tables
 	for j := 0; j < len(tables); j++ {
+		var templateModel TemplateModel
 		// 字段处理
 		table := &tables[j]
-		table.StructName = utils.ToTitle(table.Code)
-		table.FileName = strings.ToLower(table.Code)
-		table.DateTime = formattedTime
-		table.Author = table.DBCreator
-		table.PackageName = "model"
+		templateModel.StructName = utils.ToTitle(table.Code)
+		templateModel.FileName = strings.ToLower(table.Code)
+		templateModel.ObjectName = utils.ToCamelCase(table.Code)
+		templateModel.DateTime = utils.GetCurTimeStr()
+		templateModel.Author = table.DBCreator
+		templateModel.PackageName = modelName
+		templateModel.ModuleName = module.Code
+		templateModel.ProjectName = projectName
 		for k := range table.Columns {
 			column := &table.Columns[k]
 			column.FieldName = utils.ToTitle(column.Code)
 			column.JsonField = utils.ToCamelCase(column.Code)
 			column.FieldType = utils.ConvertDbTypeToGoType(column.Type)
 		}
-		filePath := utils.GetProjectPath() + "/gen/code/" + module.Code + "/" + table.PackageName + "/"
+		var filePath string
+		if appendPage != "" {
+			filePath = utils.GetProjectPath() + "/out/code/" + module.Code + "/" + templateModel.FileName + "/" + appendPage + "/" + templateModel.PackageName + "/"
+		} else {
+			filePath = utils.GetProjectPath() + "/out/code/" + module.Code + "/" + templateModel.FileName + "/" + templateModel.PackageName + "/"
+		}
 		// 判断文件夹是否存在
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
 			// 文件夹不存在，创建文件夹
@@ -104,15 +138,27 @@ func handleTable(tables []Table, module *Module, template *template.Template) {
 			if err != nil {
 				panic(err)
 			}
-			fmt.Printf("%s文件夹创建成功/n", filePath)
+			fmt.Printf("文件夹创建成功: %s\n", filePath)
 		}
+		templateModel.Table = table
+		var path string
+		if isInit {
+			path = filePath + "init.go"
+		} else {
+			if suffix != "" {
+				path = filePath + templateModel.FileName + "_" + suffix + ".go"
+			} else {
+				path = filePath + templateModel.FileName + ".go"
+			}
+		}
+
 		// 生成写入文件
-		WriteFile(filePath, table, template)
+		WriteFile(path, templateModel, template)
 	}
 }
 
-func WriteFile(filePath string, table *Table, template *template.Template) {
-	create, err := os.Create(filePath + table.FileName + ".go")
+func WriteFile(filePath string, templateModel TemplateModel, template *template.Template) {
+	create, err := os.Create(filePath)
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
@@ -122,7 +168,9 @@ func WriteFile(filePath string, table *Table, template *template.Template) {
 			fmt.Printf("error:%v\n", err)
 		}
 	}(create)
-	err = template.Execute(create, table)
+
+	err = template.Execute(create, templateModel)
+
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}

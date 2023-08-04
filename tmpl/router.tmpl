@@ -1,0 +1,34 @@
+// Package {{.PackageName}} {{.StructName}}Router 自动生成模板
+// @description <TODO description class purpose>
+// @author {{.Author}}
+// @File: {{.FileName}}
+// @version 1.0.0
+// @create {{.DateTime}}
+package {{.PackageName}}
+
+import (
+    "github.com/gin-gonic/gin"
+    "{{.ProjectName}}/out/code/{{.ModuleName}}/{{.FileName}}/api"
+    // "{{.ProjectName}}/frame/middleware"
+)
+
+type {{.StructName}}Router struct { }
+
+var {{.ObjectName}}Api = api.{{.StructName}}ApiApp
+
+// Init{{.StructName}}Router 初始化 {{.StructName}} 路由信息
+func (r *{{.StructName}}Router) Init{{.StructName}}Router(Router *gin.RouterGroup) {
+    //{{.ObjectName}}Router := Router.Group("{{.ObjectName}}").Use(middleware.OperationRecord())
+    {{.ObjectName}}Router := Router.Group("{{.ObjectName}}")
+    {{.ObjectName}}RouterWithoutRecord := Router.Group("{{.ObjectName}}")
+    {
+        {{.ObjectName}}Router.POST("create", {{.ObjectName}}Api.Create)             // 新建{{.StructName}}
+        {{.ObjectName}}Router.DELETE("delete", {{.ObjectName}}Api.Delete)           // 删除{{.StructName}}
+        {{.ObjectName}}Router.DELETE("deleteByIds", {{.ObjectName}}Api.DeleteByIds) // 批量删除{{.StructName}}
+        {{.ObjectName}}Router.POST("update", {{.ObjectName}}Api.Update)              // 更新{{.StructName}}
+    }
+    {
+        {{.ObjectName}}RouterWithoutRecord.GET("get", {{.ObjectName}}Api.Get)   // 根据ID获取{{.StructName}}
+        {{.ObjectName}}RouterWithoutRecord.GET("find", {{.ObjectName}}Api.Find) // 获取{{.StructName}}列表
+    }
+}

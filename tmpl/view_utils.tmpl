@@ -1,0 +1,93 @@
+// Package {{.PackageName}}
+// @description <TODO description class purpose>
+// @author {{.Author}}
+// @File: {{.FileName}}
+// @version 1.0.0
+// @create {{.DateTime}}
+package {{.PackageName}}
+
+import (
+    "fmt"
+    "go.uber.org/zap"
+    "{{.ProjectName}}/out/code/{{.ModuleName}}/{{.FileName}}/model"
+    "{{.ProjectName}}/global"
+    "{{.ProjectName}}/utils"
+)
+
+type {{.StructName}}ViewUtils struct { }
+
+
+func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2View(data *model.{{.StructName}}) (err error, view *{{.StructName}}View) {
+    defer func() {
+        if e := recover(); e != nil {
+            err = fmt.Errorf("{{.StructName}}ViewUtils View2Data error: %v", e)
+            global.Logger.Error("{{.StructName}}ViewUtils.Data2View:格式转换异常",
+            zap.Any("error", e))
+        }
+    }()
+    var tmp {{.StructName}}View
+    {{range .Table.Columns}}
+    {{if eq .FieldType "time.Time"}}tmp.{{.FieldName}} = utils.Time2Str(data.{{.FieldName}}){{else}}tmp.{{.FieldName}} = data.{{.FieldName}}{{end}}
+    {{end}}
+    view = &tmp
+    return
+}
+func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) View2Data(view *{{.StructName}}View) (err error, data *model.{{.StructName}}) {
+    defer func() {
+        if e := recover(); e != nil {
+            err = fmt.Errorf("{{.StructName}}ViewUtils View2Data error: %v", e)
+            global.Logger.Error("{{.StructName}}ViewUtils.View2Data:格式转换异常",
+            zap.Any("error", e))
+        }
+    }()
+    var tmp model.{{.StructName}}
+    {{range .Table.Columns}}
+    {{if eq .FieldType "time.Time"}}tmp.{{.FieldName}} = utils.Str2Time(view.{{.FieldName}}){{else}}tmp.{{.FieldName}} = view.{{.FieldName}}{{end}}
+    {{end}}
+    data = &tmp
+    return
+}
+
+func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) View2DataList(viewList *[]{{.StructName}}View) (err error, dataList *[]model.{{.StructName}}) {
+    defer func() {
+        if e := recover(); e != nil {
+            err = fmt.Errorf("{{.StructName}}ViewUtils View2DataList error: %v", e)
+            global.Logger.Error("{{.StructName}}ViewUtils.View2DataList:格式转换异常",
+            zap.Any("error", e))
+        }
+    }()
+    if viewList != nil {
+        var dataTmpList []model.{{.StructName}}
+        for i := range *dataList {
+            view := (*viewList)[i]
+            err, data := {{.ObjectName}}ViewUtils.View2Data(&view)
+            if err == nil {
+                dataTmpList = append(dataTmpList, *data)
+            }
+        }
+        dataList = &dataTmpList
+    }
+    return
+}
+
+func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2ViewList(dataList *[]model.{{.StructName}}) (err error, viewList *[]{{.StructName}}View) {
+    defer func() {
+        if e := recover(); e != nil {
+            err = fmt.Errorf("{{.StructName}}ViewUtils Data2ViewList error: %v", e)
+            global.Logger.Error("{{.StructName}}ViewUtils.Data2ViewList:格式转换异常",
+            zap.Any("error", e))
+        }
+    }()
+    if dataList != nil {
+        var viewTmpList []{{.StructName}}View
+        for i := range *dataList {
+            data := (*dataList)[i]
+            err, view := {{.ObjectName}}ViewUtils.Data2View(&data)
+            if err == nil {
+                viewTmpList = append(viewTmpList, *view)
+            }
+        }
+        viewList = &viewTmpList
+    }
+    return
+}
