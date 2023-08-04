@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"codeGenerator-Go/global"
 	"codeGenerator-Go/utils"
 	"encoding/xml"
 	"fmt"
@@ -57,8 +58,6 @@ type Column struct {
 	JsonField string
 }
 
-var projectName = "codeGenerator-Go"
-
 func Xml2Code(xmlFilePath string) {
 	// xml 解析为实体
 	file, err := os.ReadFile(xmlFilePath)
@@ -71,23 +70,23 @@ func Xml2Code(xmlFilePath string) {
 		fmt.Printf("error:%v\n", err)
 	}
 	// 生成model
-	genCode(v, "./tmpl/model.tmpl", "model", "", "", false)
-	genCode(v, "./tmpl/dao.tmpl", "model", "dao", "", false)
-	genCode(v, "./tmpl/dao_init.tmpl", "model", "", "", true)
+	genCode(v, "./tmpl/go/model.tmpl", "model", "", "", false)
+	genCode(v, "./tmpl/go/dao.tmpl", "model", "dao", "", false)
+	genCode(v, "./tmpl/go/dao_init.tmpl", "model", "", "", true)
 
 	// 生成service
-	genCode(v, "./tmpl/service.tmpl", "service", "service", "", false)
-	genCode(v, "./tmpl/service_init.tmpl", "service", "", "", true)
-	genCode(v, "./tmpl/view.tmpl", "view", "view", "service", false)
-	genCode(v, "./tmpl/view_page.tmpl", "view", "view_page", "service", false)
-	genCode(v, "./tmpl/view_utils.tmpl", "view", "view_utils", "service", false)
-	genCode(v, "./tmpl/view_init.tmpl", "view", "", "service", true)
+	genCode(v, "./tmpl/go/service.tmpl", "service", "service", "", false)
+	genCode(v, "./tmpl/go/service_init.tmpl", "service", "", "", true)
+	genCode(v, "./tmpl/go/view.tmpl", "view", "view", "service", false)
+	genCode(v, "./tmpl/go/view_page.tmpl", "view", "view_page", "service", false)
+	genCode(v, "./tmpl/go/view_utils.tmpl", "view", "view_utils", "service", false)
+	genCode(v, "./tmpl/go/view_init.tmpl", "view", "", "service", true)
 	// 生成api
-	genCode(v, "./tmpl/api.tmpl", "api", "api", "", false)
-	genCode(v, "./tmpl/api_init.tmpl", "api", "", "", true)
+	genCode(v, "./tmpl/go/api.tmpl", "api", "api", "", false)
+	genCode(v, "./tmpl/go/api_init.tmpl", "api", "", "", true)
 
 	// 生成router
-	genCode(v, "./tmpl/router.tmpl", "router", "router", "", false)
+	genCode(v, "./tmpl/go/router.tmpl", "router", "router", "", false)
 
 }
 
@@ -118,7 +117,7 @@ func handleTable(module *Module, template *template.Template, modelName, suffix 
 		templateModel.Author = table.DBCreator
 		templateModel.PackageName = modelName
 		templateModel.ModuleName = module.Code
-		templateModel.ProjectName = projectName
+		templateModel.ProjectName = global.GVA_VP.GetString("project_name")
 		for k := range table.Columns {
 			column := &table.Columns[k]
 			column.FieldName = utils.ToTitle(column.Code)

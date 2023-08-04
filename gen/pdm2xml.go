@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"codeGenerator-Go/global"
 	"fmt"
 	"github.com/beevik/etree"
 	"os"
@@ -222,7 +223,7 @@ func Pdm2xml(pdmPath string, isPack bool) {
 		newXML.WriteString("\n")
 	}
 	newXML.WriteString("</MDB>")
-	create, err := os.Create(fileName)
+	create, err := os.Create(global.GVA_VP.GetString("gen_code.pdm_2_xml.out_path"))
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
@@ -238,7 +239,6 @@ func Pdm2xml(pdmPath string, isPack bool) {
 	xmlStr = strings.ReplaceAll(xmlStr, ">=", "≥")
 	xmlStr = strings.ReplaceAll(xmlStr, "<=", "≤")
 	xmlStr = strings.ReplaceAll(xmlStr, "=<", "≤")
-	xmlStr = strings.ReplaceAll(xmlStr, "<±", "≤±")
 	_, err = create.WriteString(xmlStr)
 	if err != nil {
 		fmt.Printf("error:%v\n", err)

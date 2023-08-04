@@ -45,7 +45,7 @@ func MustGetGlobalDBByDBName(dbname string) *gorm.DB {
 	defer lock.RUnlock()
 	db, ok := GVA_DBList[dbname]
 	if !ok || db == nil {
-		panic("db no init")
+		panic("db no before")
 	}
 	return db
 }
