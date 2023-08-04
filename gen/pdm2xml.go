@@ -71,7 +71,7 @@ func Pdm2xml(pdmPath string, isPack bool) {
 		for j := 0; j < len(packageNodes); j++ {
 			packageNode := packageNodes[j]
 			if packageNode.Tag == "Name" {
-				newXML.WriteString("	 <Module>")
+				newXML.WriteString("	 <Module")
 				addAttr(&newXML, "Name", packageNode.Text())
 			}
 			if packageNode.Tag == "Code" {
@@ -232,7 +232,14 @@ func Pdm2xml(pdmPath string, isPack bool) {
 			fmt.Printf("error:%v\n", err)
 		}
 	}(create)
-	_, err = create.WriteString(newXML.String())
+	// 为避免出现 -> =>这样的标识影响解析 xml 所以需要处理一下
+	xmlStr := strings.ReplaceAll(newXML.String(), "->", "-")
+	xmlStr = strings.ReplaceAll(xmlStr, "=>", "≥")
+	xmlStr = strings.ReplaceAll(xmlStr, ">=", "≥")
+	xmlStr = strings.ReplaceAll(xmlStr, "<=", "≤")
+	xmlStr = strings.ReplaceAll(xmlStr, "=<", "≤")
+	xmlStr = strings.ReplaceAll(xmlStr, "<±", "≤±")
+	_, err = create.WriteString(xmlStr)
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
