@@ -1,0 +1,61 @@
+<template>
+    <div>
+        <el-dialog :model-value="visible" :before-close="handleClose" :title="name">
+            <el-form :model="formData" label-position="right" label-width="80px">
+            {{range .Table.Columns}}
+                <el-form-item label="{{.Name}}:"{{if eq .JsonField "id"}}style="display: none"{{end}}>
+                {{if .IsTime}}<el-date-picker v-model="formData.{{.JsonField}}" type="date" style="width:100%" placeholder="请选择{{.Name}}"
+                                    readonly/>
+            {{else}}<el-input v-model="formData.{{.JsonField}}" clearable placeholder="请输入{{.Name}}" readonly/>
+            {{end}}</el-form-item>{{end}}
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button size="small" @click="this.handleClose">取 消</el-button>
+                </div>
+            </template>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+    import { defineComponent, ref } from 'vue'
+
+    const formData = ref({
+    {{range .Table.Columns}}
+        {{.JsonField}}: '',{{end}}
+    })
+    export default defineComponent({
+        name: '{{printf "%s" .ObjectName}}Detail',
+        props: {
+            visible: Boolean, // 更新了<{{printf "%s" .ObjectName}}Add v-model:visible
+            {{printf "%s" .ObjectName}}DetailContent: Object,
+        },
+        watch: {
+            'visible': function(newV, oldV) {
+                if (newV) {
+                    const value = this.{{printf "%s" .ObjectName}}DetailContent
+                    formData.value = {
+                        {{range .Table.Columns}}
+                        {{.JsonField}}: value.{{.JsonField}},{{end}}
+                    }
+                }
+            },
+        },
+        methods: {
+            init() {
+            },
+        },
+        setup(props, context) {
+            const handleClose = function() {
+                formData.value = {
+                    {{range .Table.Columns}}
+                    {{.JsonField}}: '',{{end}}
+                }
+                context.emit('update:visible', false)
+            }
+
+            return { handleClose, formData }
+        },
+    })
+</script>

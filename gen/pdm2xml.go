@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-var fileName = "./out/out.xml"
-
 func addAttr(sb *strings.Builder, attr, val string) {
 	sb.WriteString(" " + attr + "=\"")
 	sb.WriteString(val + "\"")

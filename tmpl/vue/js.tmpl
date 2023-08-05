@@ -1,0 +1,61 @@
+import service from '@/utils/request'
+
+// @Summary 创建{{.StructName}}
+// @Router /{{.ObjectName}}/create [post]
+export const create{{.StructName}} = (data) => {
+    return service({
+        url: '/{{.ObjectName}}/create',
+        method: 'post',
+        data,
+    })
+}
+
+// @Summary 删除{{.StructName}}
+// @Router /{{.ObjectName}}/delete{{.StructName}} [delete]
+export const delete{{.StructName}} = (data) => {
+    return service({
+        url: '/{{.ObjectName}}/delete',
+        method: 'delete',
+        data,
+    })
+}
+
+// @Summary 删除{{.StructName}}
+// @Router /{{.ObjectName}}/delete{{.StructName}} [delete]
+export const delete{{.StructName}}ByIds = (data) => {
+    return service({
+        url: '/{{.ObjectName}}/deleteByIds',
+        method: 'delete',
+        data,
+    })
+}
+
+// @Summary 更新{{.StructName}}
+// @Router /{{.ObjectName}}/update{{.StructName}} [put]
+export const update{{.StructName}} = (params) => {
+    return service({
+        url: '/{{.ObjectName}}/update',
+        method: 'post',
+        params,
+    })
+}
+
+// @Summary 用id查询{{.StructName}}
+// @Router /{{.ObjectName}}/get{{.StructName}} [get]
+export const get{{.StructName}} = (params) => {
+    return service({
+        url: '/{{.ObjectName}}/get',
+        method: 'get',
+        params,
+    })
+}
+
+// @Summary 分页获取{{.StructName}}列表
+// @Router /{{.ObjectName}}/get{{.StructName}}List [get]
+export const find{{.StructName}}List = (params) => {
+    return service({
+        url: '/{{.ObjectName}}/find',
+        method: 'get',
+        params,
+    })
+}

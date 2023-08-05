@@ -5,9 +5,9 @@ import (
 	"codeGenerator-Go/utils"
 	"encoding/xml"
 	"fmt"
-	"html/template"
 	"os"
 	"strings"
+	"text/template"
 )
 
 type MDB struct {
@@ -56,6 +56,7 @@ type Column struct {
 	FieldName string
 	FieldType string
 	JsonField string
+	IsTime    bool
 }
 
 func Xml2Code(xmlFilePath string) {
@@ -64,47 +65,60 @@ func Xml2Code(xmlFilePath string) {
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
-	v := MDB{}
+	v := &MDB{}
 	err = xml.Unmarshal(file, &v)
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
-	// 生成model
-	genCode(v, "./tmpl/go/model.tmpl", "model", "", "", false)
-	genCode(v, "./tmpl/go/dao.tmpl", "model", "dao", "", false)
-	genCode(v, "./tmpl/go/dao_init.tmpl", "model", "", "", true)
+	genLanguage(v)
+}
 
-	// 生成service
-	genCode(v, "./tmpl/go/service.tmpl", "service", "service", "", false)
-	genCode(v, "./tmpl/go/service_init.tmpl", "service", "", "", true)
-	genCode(v, "./tmpl/go/view.tmpl", "view", "view", "service", false)
-	genCode(v, "./tmpl/go/view_page.tmpl", "view", "view_page", "service", false)
-	genCode(v, "./tmpl/go/view_utils.tmpl", "view", "view_utils", "service", false)
-	genCode(v, "./tmpl/go/view_init.tmpl", "view", "", "service", true)
-	// 生成api
-	genCode(v, "./tmpl/go/api.tmpl", "api", "api", "", false)
-	genCode(v, "./tmpl/go/api_init.tmpl", "api", "", "", true)
+func genLanguage(v *MDB) {
+	switch global.GVA_VP.GetString("gen_code.language") {
+	case "go":
+		// 生成model
+		genCode(v, "./tmpl/go/model.tmpl", "model", "", "", false)
+		genCode(v, "./tmpl/go/dao.tmpl", "model", "dao", "", false)
+		genCode(v, "./tmpl/go/dao_init.tmpl", "model", "", "", true)
 
-	// 生成router
-	genCode(v, "./tmpl/go/router.tmpl", "router", "router", "", false)
+		// 生成service
+		genCode(v, "./tmpl/go/service.tmpl", "service", "service", "", false)
+		genCode(v, "./tmpl/go/service_init.tmpl", "service", "", "", true)
+		genCode(v, "./tmpl/go/view.tmpl", "view", "view", "service", false)
+		genCode(v, "./tmpl/go/view_page.tmpl", "view", "view_page", "service", false)
+		genCode(v, "./tmpl/go/view_utils.tmpl", "view", "view_utils", "service", false)
+		genCode(v, "./tmpl/go/view_init.tmpl", "view", "", "service", true)
+		// 生成api
+		genCode(v, "./tmpl/go/api.tmpl", "api", "api", "", false)
+		genCode(v, "./tmpl/go/api_init.tmpl", "api", "", "", true)
+		// 生成router
+		genCode(v, "./tmpl/go/router.tmpl", "router", "router", "", false)
+	case "vue":
+		// 生成vue
+		genCode(v, "./tmpl/vue/index.tmpl", "", "", "", false)
+		genCode(v, "./tmpl/vue/add.tmpl", "", "add", "", false)
+		genCode(v, "./tmpl/vue/update.tmpl", "", "update", "", false)
+		genCode(v, "./tmpl/vue/detail.tmpl", "", "detail", "", false)
+		genCode(v, "./tmpl/vue/js.tmpl", "", "", "js", true)
+	}
 
 }
 
-func genCode(v MDB, tmplFile string, modelName, suffix string, appendPage string, isInit bool) {
+func genCode(v *MDB, tmplFile string, packageName, suffix string, appendPage string, isInit bool) {
 	model, err := os.ReadFile(tmplFile)
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
-	template, err := template.New(modelName).Parse(string(model))
+	template, err := template.New(packageName).Parse(string(model))
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
 	}
 	for _, module := range v.Modules {
-		handleTable(&module, template, modelName, suffix, appendPage, isInit)
+		handleTable(&module, template, packageName, suffix, appendPage, isInit)
 	}
 }
 
-func handleTable(module *Module, template *template.Template, modelName, suffix string, appendPage string, isInit bool) {
+func handleTable(module *Module, template *template.Template, packageName, suffix string, appendPage string, isInit bool) {
 	tables := module.Tables
 	for j := 0; j < len(tables); j++ {
 		var templateModel TemplateModel
@@ -115,7 +129,7 @@ func handleTable(module *Module, template *template.Template, modelName, suffix 
 		templateModel.ObjectName = utils.ToCamelCase(table.Code)
 		templateModel.DateTime = utils.GetCurTimeStr()
 		templateModel.Author = table.DBCreator
-		templateModel.PackageName = modelName
+		templateModel.PackageName = packageName
 		templateModel.ModuleName = module.Code
 		templateModel.ProjectName = global.GVA_VP.GetString("project_name")
 		for k := range table.Columns {
@@ -123,12 +137,18 @@ func handleTable(module *Module, template *template.Template, modelName, suffix 
 			column.FieldName = utils.ToTitle(column.Code)
 			column.JsonField = utils.ToCamelCase(column.Code)
 			column.FieldType = utils.ConvertDbTypeToGoType(column.Type)
+			if column.FieldType == "time.Time" {
+				column.IsTime = true
+			}
 		}
 		var filePath string
+
+		filePath = global.GVA_VP.GetString("gen_code.out_path") + global.GVA_VP.GetString("gen_code.language") + "/"
+
 		if appendPage != "" {
-			filePath = utils.GetProjectPath() + "/out/code/" + module.Code + "/" + templateModel.FileName + "/" + appendPage + "/" + templateModel.PackageName + "/"
+			filePath += module.Code + "/" + templateModel.FileName + "/" + appendPage + "/" + templateModel.PackageName + "/"
 		} else {
-			filePath = utils.GetProjectPath() + "/out/code/" + module.Code + "/" + templateModel.FileName + "/" + templateModel.PackageName + "/"
+			filePath += module.Code + "/" + templateModel.FileName + "/" + templateModel.PackageName + "/"
 		}
 		// 判断文件夹是否存在
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
@@ -141,16 +161,17 @@ func handleTable(module *Module, template *template.Template, modelName, suffix 
 		}
 		templateModel.Table = table
 		var path string
-		if isInit {
+		if global.GVA_VP.GetString("gen_code.language") == "go" && isInit {
 			path = filePath + "init.go"
+		} else if global.GVA_VP.GetString("gen_code.language") == "vue" && isInit {
+			path = filePath + templateModel.FileName + ".js"
 		} else {
 			if suffix != "" {
-				path = filePath + templateModel.FileName + "_" + suffix + ".go"
+				path = filePath + templateModel.FileName + "_" + suffix + "." + global.GVA_VP.GetString("gen_code.language")
 			} else {
-				path = filePath + templateModel.FileName + ".go"
+				path = filePath + templateModel.FileName + "." + global.GVA_VP.GetString("gen_code.language")
 			}
 		}
-
 		// 生成写入文件
 		WriteFile(path, templateModel, template)
 	}

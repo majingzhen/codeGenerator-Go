@@ -1,0 +1,66 @@
+<template>
+    <div>
+        <el-dialog :model-value="visible" :before-close="handleClose" :title="name">
+            <el-form :model="formData" label-position="right" label-width="80px">
+                {{range .Table.Columns}}{{if not (eq .JsonField "id")}}
+                <el-form-item label="{{.Name}}:">
+                    {{if .IsTime}}<el-date-picker v-model="formData.{{.JsonField}}" type="date" style="width:100%" placeholder="请选择{{.Name}}"/>
+                    {{else}}<el-input v-model="formData.{{.JsonField}}" clearable placeholder="请输入{{.Name}}"/>
+                {{end}}</el-form-item>{{end}}{{end}}
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button size="small" @click="this.handleClose">取 消</el-button>
+                    <el-button size="small" type="primary" @click="enterDialog">确 定</el-button>
+                </div>
+            </template>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+    import { create{{printf "%s" .StructName}} } from '@/api/{{printf "%s" .ObjectName}}'
+    import { ElMessage} from 'element-plus'
+    import { defineComponent, ref } from 'vue'
+    export default defineComponent({
+        name: '{{printf "%s" .ObjectName}}Add',
+        // 把值传回了{{printf "%s" .ObjectName}}Add
+        props: {
+            visible: Boolean, // 更新了<{{printf "%s" .ObjectName}}Add v-model:visible
+            name: String
+        },
+        methods:{
+            init(){
+            }
+        },
+        setup(props, context){
+            // console.log(22222);
+            const handleClose = function() {
+                formData.value = {
+                    {{range .Table.Columns}}
+                    {{.JsonField}}: '',{{end}}
+                }
+                context.emit('update:visible', false)
+            }
+            const formData = ref({
+                {{range .Table.Columns}}
+                {{.JsonField}}: '',{{end}}
+            })
+
+            // 弹窗确定
+            const enterDialog = async() => {
+                let res = await create{{printf "%s" .StructName}}(formData.value)
+                if (res.code === 0) {
+                    ElMessage({
+                        type: 'success',
+                        message: '创建/更改成功',
+                    })
+                    handleClose();
+                    // 简单粗暴，直接刷新页面，不在更新table了，麻烦
+                    location. reload();
+                }
+            }
+            return { handleClose, enterDialog, formData }
+        }
+    })
+</script>
