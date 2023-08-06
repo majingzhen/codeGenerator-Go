@@ -19,6 +19,10 @@ func ConvertDbTypeToGoType(dbType string) string {
 		return "time.Time"
 	case "date":
 		return "time.Time"
+	case "bigint":
+		return "int"
+	case "tinyint":
+		return "int8"
 	default:
 		return "interface{}"
 	}

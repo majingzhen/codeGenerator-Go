@@ -1,32 +1,260 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MDB>
-	 <Module Name="信息模块" Code="bi">
-    <Table Name="用户" Code="BI_USER" HtmlPkg="bi/biuser" GoPkg="bi.biuser" DBCreator="Administrator" Comment="BI的用户">
-      <Column Name="主键" Code="ID" Type="VARCHAR" Size="32"/>
-      <Column Name="姓名" Code="TEST_NAME" Type="VARCHAR" Size="128"/>
-      <Column Name="性别" Code="GENDER" Type="INT" Size="8"/>
-      <Column Name="备注" Code="REMARK" Type="TEXT" Size="256"/>
-      <Column Name="出生日期" Code="BIRTH" Type="DATE"/>
-      <Column Name="创建时间" Code="CREATE_TIME" Type="DATETIME"/>
-      <Column Name="修改时间" Code="UPDATE_TIME" Type="DATETIME"/>
+	 <Module Name="manager" Code="manager">
+    <Table Name="sys_dept" Code="sys_dept" HtmlPkg="manager/sysdept" GoPkg="manager.sysdept" DBCreator="Majz">
+      <Column Name="dept_id" Code="DEPT_ID" Comment="部门id" Type="BIGINT" Size="20"/>
+      <Column Name="parent_id" Code="PARENT_ID" Comment="父部门id" Type="BIGINT" Size="20"/>
+      <Column Name="ancestors" Code="ANCESTORS" Comment="祖级列表" Type="VARCHAR" Size="50"/>
+      <Column Name="dept_name" Code="DEPT_NAME" Comment="部门名称" Type="VARCHAR" Size="30"/>
+      <Column Name="order_num" Code="ORDER_NUM" Comment="显示顺序" Type="INT" Size="4"/>
+      <Column Name="leader" Code="LEADER" Comment="负责人" Type="VARCHAR" Size="20"/>
+      <Column Name="phone" Code="PHONE" Comment="联系电话" Type="VARCHAR" Size="11"/>
+      <Column Name="email" Code="EMAIL" Comment="邮箱" Type="VARCHAR" Size="50"/>
+      <Column Name="status" Code="STATUS" Comment="部门状态（0正常 1停用）" Type="TINYINT" Size="1"/>
+      <Column Name="del_flag" Code="DEL_FLAG" Comment="删除标志（0代表存在 2代表删除）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
     </Table>
-    <Table Name="角色" Code="BI_ROLE" HtmlPkg="bi/birole" GoPkg="bi.birole" DBCreator="Majz" Comment="BI的角色">
-      <Column Name="主键" Code="ID" Type="VARCHAR" Size="32"/>
-      <Column Name="姓名" Code="TEST_NAME" Type="VARCHAR" Size="128"/>
-      <Column Name="性别" Code="GENDER" Type="INT" Size="8"/>
-      <Column Name="备注" Code="REMARK" Type="TEXT" Size="256"/>
-      <Column Name="出生日期" Code="BIRTH" Type="DATE"/>
-      <Column Name="创建时间" Code="CREATE_TIME" Type="DATETIME"/>
-      <Column Name="修改时间" Code="UPDATE_TIME" Type="DATETIME"/>
+    <Table Name="sys_user" Code="sys_user" HtmlPkg="manager/sysuser" GoPkg="manager.sysuser" DBCreator="Majz">
+      <Column Name="user_id" Code="USER_ID" Comment="用户ID" Type="BIGINT" Size="20"/>
+      <Column Name="dept_id" Code="DEPT_ID" Comment="部门ID" Type="BIGINT" Size="20"/>
+      <Column Name="user_name" Code="USER_NAME" Comment="用户账号" Type="VARCHAR" Size="30"/>
+      <Column Name="nick_name" Code="NICK_NAME" Comment="用户昵称" Type="VARCHAR" Size="30"/>
+      <Column Name="user_type" Code="USER_TYPE" Comment="用户类型（00系统用户）" Type="VARCHAR" Size="2"/>
+      <Column Name="email" Code="EMAIL" Comment="用户邮箱" Type="VARCHAR" Size="50"/>
+      <Column Name="phonenumber" Code="PHONENUMBER" Comment="手机号码" Type="VARCHAR" Size="11"/>
+      <Column Name="sex" Code="SEX" Comment="用户性别（0男 1女 2未知）" Type="TINYINT" Size="1"/>
+      <Column Name="avatar" Code="AVATAR" Comment="头像地址" Type="VARCHAR" Size="100"/>
+      <Column Name="password" Code="PASSWORD" Comment="密码" Type="VARCHAR" Size="100"/>
+      <Column Name="status" Code="STATUS" Comment="帐号状态（0正常 1停用）" Type="TINYINT" Size="1"/>
+      <Column Name="del_flag" Code="DEL_FLAG" Comment="删除标志（0代表存在 2代表删除）" Type="TINYINT" Size="1"/>
+      <Column Name="login_ip" Code="LOGIN_IP" Comment="最后登录IP" Type="VARCHAR" Size="128"/>
+      <Column Name="login_date" Code="LOGIN_DATE" Comment="最后登录时间" Type="DATETIME"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
     </Table>
-  </Module>
-	 <Module Name="权限模块" Code="oa">
-    <Table Name="权限角色" Code="OA_ROLE" HtmlPkg="oa/oarole" GoPkg="oa.oarole" DBCreator="Administrator">
-      <Column Name="主键" Code="ID" Comment="UUID" Type="VARCHAR" Size="32"/>
-      <Column Name="角色名" Code="NAME" Type="VARCHAR" Size="32"/>
-      <Column Name="角色标识" Code="CODE" Type="VARCHAR" Size="32"/>
-      <Column Name="创建时间" Code="CREATE_TIME" Type="DATETIME"/>
-      <Column Name="修改时间" Code="UPDATE_TIME" Type="DATETIME"/>
+    <Table Name="sys_post" Code="sys_post" HtmlPkg="manager/syspost" GoPkg="manager.syspost" DBCreator="Majz">
+      <Column Name="post_id" Code="POST_ID" Comment="岗位ID" Type="BIGINT" Size="20"/>
+      <Column Name="post_code" Code="POST_CODE" Comment="岗位编码" Type="VARCHAR" Size="64"/>
+      <Column Name="post_name" Code="POST_NAME" Comment="岗位名称" Type="VARCHAR" Size="50"/>
+      <Column Name="post_sort" Code="POST_SORT" Comment="显示顺序" Type="INT" Size="4"/>
+      <Column Name="status" Code="STATUS" Comment="状态（0正常 1停用）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
+    </Table>
+    <Table Name="sys_role" Code="sys_role" HtmlPkg="manager/sysrole" GoPkg="manager.sysrole" DBCreator="Majz">
+      <Column Name="role_id" Code="ROLE_ID" Comment="角色ID" Type="BIGINT" Size="20"/>
+      <Column Name="role_name" Code="ROLE_NAME" Comment="角色名称" Type="VARCHAR" Size="30"/>
+      <Column Name="role_key" Code="ROLE_KEY" Comment="角色权限字符串" Type="VARCHAR" Size="100"/>
+      <Column Name="role_sort" Code="ROLE_SORT" Comment="显示顺序" Type="INT" Size="4"/>
+      <Column Name="data_scope" Code="DATA_SCOPE" Comment="数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）" Type="TINYINT" Size="1"/>
+      <Column Name="menu_check_strictly" Code="MENU_CHECK_STRICTLY" Comment="菜单树选择项是否关联显示" Type="TINYINT" Size="1"/>
+      <Column Name="dept_check_strictly" Code="DEPT_CHECK_STRICTLY" Comment="部门树选择项是否关联显示" Type="TINYINT" Size="1"/>
+      <Column Name="status" Code="STATUS" Comment="角色状态（0正常 1停用）" Type="TINYINT" Size="1"/>
+      <Column Name="del_flag" Code="DEL_FLAG" Comment="删除标志（0代表存在 2代表删除）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
+    </Table>
+    <Table Name="sys_menu" Code="sys_menu" HtmlPkg="manager/sysmenu" GoPkg="manager.sysmenu" DBCreator="Majz">
+      <Column Name="menu_id" Code="MENU_ID" Comment="菜单ID" Type="BIGINT" Size="20"/>
+      <Column Name="menu_name" Code="MENU_NAME" Comment="菜单名称" Type="VARCHAR" Size="50"/>
+      <Column Name="parent_id" Code="PARENT_ID" Comment="父菜单ID" Type="BIGINT" Size="20"/>
+      <Column Name="order_num" Code="ORDER_NUM" Comment="显示顺序" Type="INT" Size="4"/>
+      <Column Name="path" Code="PATH" Comment="路由地址" Type="VARCHAR" Size="200"/>
+      <Column Name="component" Code="COMPONENT" Comment="组件路径" Type="VARCHAR" Size="255"/>
+      <Column Name="query" Code="QUERY" Comment="路由参数" Type="VARCHAR" Size="255"/>
+      <Column Name="is_frame" Code="IS_FRAME" Comment="是否为外链（0是 1否）" Type="INT" Size="1"/>
+      <Column Name="is_cache" Code="IS_CACHE" Comment="是否缓存（0缓存 1不缓存）" Type="INT" Size="1"/>
+      <Column Name="menu_type" Code="MENU_TYPE" Comment="菜单类型（M目录 C菜单 F按钮）" Type="TINYINT" Size="1"/>
+      <Column Name="visible" Code="VISIBLE" Comment="菜单状态（0显示 1隐藏）" Type="TINYINT" Size="1"/>
+      <Column Name="status" Code="STATUS" Comment="菜单状态（0正常 1停用）" Type="TINYINT" Size="1"/>
+      <Column Name="perms" Code="PERMS" Comment="权限标识" Type="VARCHAR" Size="100"/>
+      <Column Name="icon" Code="ICON" Comment="菜单图标" Type="VARCHAR" Size="100"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
+    </Table>
+    <Table Name="sys_user_role" Code="sys_user_role" HtmlPkg="manager/sysuserrole" GoPkg="manager.sysuserrole" DBCreator="Majz">
+      <Column Name="user_id" Code="USER_ID" Comment="用户ID" Type="BIGINT" Size="20"/>
+      <Column Name="role_id" Code="ROLE_ID" Comment="角色ID" Type="BIGINT" Size="20"/>
+    </Table>
+    <Table Name="sys_role_menu" Code="sys_role_menu" HtmlPkg="manager/sysrolemenu" GoPkg="manager.sysrolemenu" DBCreator="Majz">
+      <Column Name="role_id" Code="ROLE_ID" Comment="角色ID" Type="BIGINT" Size="20"/>
+      <Column Name="menu_id" Code="MENU_ID" Comment="菜单ID" Type="BIGINT" Size="20"/>
+    </Table>
+    <Table Name="sys_role_dept" Code="sys_role_dept" HtmlPkg="manager/sysroledept" GoPkg="manager.sysroledept" DBCreator="Majz">
+      <Column Name="role_id" Code="ROLE_ID" Comment="角色ID" Type="BIGINT" Size="20"/>
+      <Column Name="dept_id" Code="DEPT_ID" Comment="部门ID" Type="BIGINT" Size="20"/>
+    </Table>
+    <Table Name="sys_user_post" Code="sys_user_post" HtmlPkg="manager/sysuserpost" GoPkg="manager.sysuserpost" DBCreator="Majz">
+      <Column Name="user_id" Code="USER_ID" Comment="用户ID" Type="BIGINT" Size="20"/>
+      <Column Name="post_id" Code="POST_ID" Comment="岗位ID" Type="BIGINT" Size="20"/>
+    </Table>
+    <Table Name="sys_oper_log" Code="sys_oper_log" HtmlPkg="manager/sysoperlog" GoPkg="manager.sysoperlog" DBCreator="Majz">
+      <Column Name="oper_id" Code="OPER_ID" Comment="日志主键" Type="BIGINT" Size="20"/>
+      <Column Name="title" Code="TITLE" Comment="模块标题" Type="VARCHAR" Size="50"/>
+      <Column Name="business_type" Code="BUSINESS_TYPE" Comment="业务类型（0其它 1新增 2修改 3删除）" Type="INT" Size="8"/>
+      <Column Name="method" Code="METHOD" Comment="方法名称" Type="VARCHAR" Size="100"/>
+      <Column Name="request_method" Code="REQUEST_METHOD" Comment="请求方式" Type="VARCHAR" Size="10"/>
+      <Column Name="operator_type" Code="OPERATOR_TYPE" Comment="操作类别（0其它 1后台用户 2手机端用户）" Type="INT" Size="8"/>
+      <Column Name="oper_name" Code="OPER_NAME" Comment="操作人员" Type="VARCHAR" Size="50"/>
+      <Column Name="dept_name" Code="DEPT_NAME" Comment="部门名称" Type="VARCHAR" Size="50"/>
+      <Column Name="oper_url" Code="OPER_URL" Comment="请求URL" Type="VARCHAR" Size="255"/>
+      <Column Name="oper_ip" Code="OPER_IP" Comment="主机地址" Type="VARCHAR" Size="128"/>
+      <Column Name="oper_location" Code="OPER_LOCATION" Comment="操作地点" Type="VARCHAR" Size="255"/>
+      <Column Name="oper_param" Code="OPER_PARAM" Comment="请求参数" Type="VARCHAR" Size="2000"/>
+      <Column Name="json_result" Code="JSON_RESULT" Comment="返回参数" Type="VARCHAR" Size="2000"/>
+      <Column Name="status" Code="STATUS" Comment="操作状态（0正常 1异常）" Type="INT" Size="1"/>
+      <Column Name="error_msg" Code="ERROR_MSG" Comment="错误消息" Type="VARCHAR" Size="2000"/>
+      <Column Name="oper_time" Code="OPER_TIME" Comment="操作时间" Type="DATETIME"/>
+      <Column Name="cost_time" Code="COST_TIME" Comment="消耗时间" Type="BIGINT" Size="20"/>
+    </Table>
+    <Table Name="sys_dict_type" Code="sys_dict_type" HtmlPkg="manager/sysdicttype" GoPkg="manager.sysdicttype" DBCreator="Majz">
+      <Column Name="dict_id" Code="DICT_ID" Comment="字典主键" Type="BIGINT" Size="20"/>
+      <Column Name="dict_name" Code="DICT_NAME" Comment="字典名称" Type="VARCHAR" Size="100"/>
+      <Column Name="dict_type" Code="DICT_TYPE" Comment="字典类型" Type="VARCHAR" Size="100"/>
+      <Column Name="status" Code="STATUS" Comment="状态（0正常 1停用）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
+      <Column Name="unique" Code="UNIQUE" Type=""/>
+    </Table>
+    <Table Name="sys_dict_data" Code="sys_dict_data" HtmlPkg="manager/sysdictdata" GoPkg="manager.sysdictdata" DBCreator="Majz">
+      <Column Name="dict_code" Code="DICT_CODE" Comment="字典编码" Type="BIGINT" Size="20"/>
+      <Column Name="dict_sort" Code="DICT_SORT" Comment="字典排序" Type="INT" Size="4"/>
+      <Column Name="dict_label" Code="DICT_LABEL" Comment="字典标签" Type="VARCHAR" Size="100"/>
+      <Column Name="dict_value" Code="DICT_VALUE" Comment="字典键值" Type="VARCHAR" Size="100"/>
+      <Column Name="dict_type" Code="DICT_TYPE" Comment="字典类型" Type="VARCHAR" Size="100"/>
+      <Column Name="css_class" Code="CSS_CLASS" Comment="样式属性（其他样式扩展）" Type="VARCHAR" Size="100"/>
+      <Column Name="list_class" Code="LIST_CLASS" Comment="表格回显样式" Type="VARCHAR" Size="100"/>
+      <Column Name="is_default" Code="IS_DEFAULT" Comment="是否默认（Y是 N否）" Type="TINYINT" Size="1"/>
+      <Column Name="status" Code="STATUS" Comment="状态（0正常 1停用）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
+    </Table>
+    <Table Name="sys_config" Code="sys_config" HtmlPkg="manager/sysconfig" GoPkg="manager.sysconfig" DBCreator="Majz">
+      <Column Name="config_id" Code="CONFIG_ID" Comment="参数主键" Type="INT" Size="5"/>
+      <Column Name="config_name" Code="CONFIG_NAME" Comment="参数名称" Type="VARCHAR" Size="100"/>
+      <Column Name="config_key" Code="CONFIG_KEY" Comment="参数键名" Type="VARCHAR" Size="100"/>
+      <Column Name="config_value" Code="CONFIG_VALUE" Comment="参数键值" Type="VARCHAR" Size="500"/>
+      <Column Name="config_type" Code="CONFIG_TYPE" Comment="系统内置（Y是 N否）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
+    </Table>
+    <Table Name="sys_logininfor" Code="sys_logininfor" HtmlPkg="manager/syslogininfor" GoPkg="manager.syslogininfor" DBCreator="Majz">
+      <Column Name="info_id" Code="INFO_ID" Comment="访问ID" Type="BIGINT" Size="20"/>
+      <Column Name="user_name" Code="USER_NAME" Comment="用户账号" Type="VARCHAR" Size="50"/>
+      <Column Name="ipaddr" Code="IPADDR" Comment="登录IP地址" Type="VARCHAR" Size="128"/>
+      <Column Name="login_location" Code="LOGIN_LOCATION" Comment="登录地点" Type="VARCHAR" Size="255"/>
+      <Column Name="browser" Code="BROWSER" Comment="浏览器类型" Type="VARCHAR" Size="50"/>
+      <Column Name="os" Code="OS" Comment="操作系统" Type="VARCHAR" Size="50"/>
+      <Column Name="status" Code="STATUS" Comment="登录状态（0成功 1失败）" Type="TINYINT" Size="1"/>
+      <Column Name="msg" Code="MSG" Comment="提示消息" Type="VARCHAR" Size="255"/>
+      <Column Name="login_time" Code="LOGIN_TIME" Comment="访问时间" Type="DATETIME"/>
+    </Table>
+    <Table Name="sys_job" Code="sys_job" HtmlPkg="manager/sysjob" GoPkg="manager.sysjob" DBCreator="Majz">
+      <Column Name="job_id" Code="JOB_ID" Comment="任务ID" Type="BIGINT" Size="20"/>
+      <Column Name="job_name" Code="JOB_NAME" Comment="任务名称" Type="VARCHAR" Size="64"/>
+      <Column Name="job_group" Code="JOB_GROUP" Comment="任务组名" Type="VARCHAR" Size="64"/>
+      <Column Name="invoke_target" Code="INVOKE_TARGET" Comment="调用目标字符串" Type="VARCHAR" Size="500"/>
+      <Column Name="cron_expression" Code="CRON_EXPRESSION" Comment="cron执行表达式" Type="VARCHAR" Size="255"/>
+      <Column Name="misfire_policy" Code="MISFIRE_POLICY" Comment="计划执行错误策略（1立即执行 2执行一次 3放弃执行）" Type="VARCHAR" Size="20"/>
+      <Column Name="concurrent" Code="CONCURRENT" Comment="是否并发执行（0允许 1禁止）" Type="TINYINT" Size="1"/>
+      <Column Name="status" Code="STATUS" Comment="状态（0正常 1暂停）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注信息" Type="VARCHAR" Size="500"/>
+    </Table>
+    <Table Name="sys_job_log" Code="sys_job_log" HtmlPkg="manager/sysjoblog" GoPkg="manager.sysjoblog" DBCreator="Majz">
+      <Column Name="job_log_id" Code="JOB_LOG_ID" Comment="任务日志ID" Type="BIGINT" Size="20"/>
+      <Column Name="job_name" Code="JOB_NAME" Comment="任务名称" Type="VARCHAR" Size="64"/>
+      <Column Name="job_group" Code="JOB_GROUP" Comment="任务组名" Type="VARCHAR" Size="64"/>
+      <Column Name="invoke_target" Code="INVOKE_TARGET" Comment="调用目标字符串" Type="VARCHAR" Size="500"/>
+      <Column Name="job_message" Code="JOB_MESSAGE" Comment="日志信息" Type="VARCHAR" Size="500"/>
+      <Column Name="status" Code="STATUS" Comment="执行状态（0正常 1失败）" Type="TINYINT" Size="1"/>
+      <Column Name="exception_info" Code="EXCEPTION_INFO" Comment="异常信息" Type="VARCHAR" Size="2000"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+    </Table>
+    <Table Name="sys_notice" Code="sys_notice" HtmlPkg="manager/sysnotice" GoPkg="manager.sysnotice" DBCreator="Majz">
+      <Column Name="notice_id" Code="NOTICE_ID" Comment="公告ID" Type="INT" Size="4"/>
+      <Column Name="notice_title" Code="NOTICE_TITLE" Comment="公告标题" Type="VARCHAR" Size="50"/>
+      <Column Name="notice_type" Code="NOTICE_TYPE" Comment="公告类型（1通知 2公告）" Type="TINYINT" Size="1"/>
+      <Column Name="notice_content" Code="NOTICE_CONTENT" Comment="公告内容" Type="LONGBLOB"/>
+      <Column Name="status" Code="STATUS" Comment="公告状态（0正常 1关闭）" Type="TINYINT" Size="1"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="255"/>
+    </Table>
+    <Table Name="gen_table" Code="gen_table" HtmlPkg="manager/gentable" GoPkg="manager.gentable" DBCreator="Majz">
+      <Column Name="table_id" Code="TABLE_ID" Comment="编号" Type="BIGINT" Size="20"/>
+      <Column Name="name" Code="NAME" Comment="表名称" Type="VARCHAR" Size="200"/>
+      <Column Name="comment" Code="COMMENT" Comment="表描述" Type="VARCHAR" Size="500"/>
+      <Column Name="sub_table_name" Code="SUB_TABLE_NAME" Comment="关联子表的表名" Type="VARCHAR" Size="64"/>
+      <Column Name="sub_table_fk_name" Code="SUB_TABLE_FK_NAME" Comment="子表关联的外键名" Type="VARCHAR" Size="64"/>
+      <Column Name="class_name" Code="CLASS_NAME" Comment="实体类名称" Type="VARCHAR" Size="100"/>
+      <Column Name="tpl_category" Code="TPL_CATEGORY" Comment="使用的模板（crud单表操作 tree树表操作）" Type="VARCHAR" Size="200"/>
+      <Column Name="package_name" Code="PACKAGE_NAME" Comment="生成包路径" Type="VARCHAR" Size="100"/>
+      <Column Name="module_name" Code="MODULE_NAME" Comment="生成模块名" Type="VARCHAR" Size="30"/>
+      <Column Name="business_name" Code="BUSINESS_NAME" Comment="生成业务名" Type="VARCHAR" Size="30"/>
+      <Column Name="function_name" Code="FUNCTION_NAME" Comment="生成功能名" Type="VARCHAR" Size="50"/>
+      <Column Name="function_author" Code="FUNCTION_AUTHOR" Comment="生成功能作者" Type="VARCHAR" Size="50"/>
+      <Column Name="gen_type" Code="GEN_TYPE" Comment="生成代码方式（0zip压缩包 1自定义路径）" Type="TINYINT" Size="1"/>
+      <Column Name="gen_path" Code="GEN_PATH" Comment="生成路径（不填默认项目路径）" Type="VARCHAR" Size="200"/>
+      <Column Name="options" Code="OPTIONS" Comment="其它生成选项" Type="VARCHAR" Size="1000"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
+      <Column Name="remark" Code="REMARK" Comment="备注" Type="VARCHAR" Size="500"/>
+    </Table>
+    <Table Name="gen_table_column" Code="gen_table_column" HtmlPkg="manager/gentablecolumn" GoPkg="manager.gentablecolumn" DBCreator="Majz">
+      <Column Name="column_id" Code="COLUMN_ID" Comment="编号" Type="BIGINT" Size="20"/>
+      <Column Name="table_id" Code="TABLE_ID" Comment="归属表编号" Type="BIGINT" Size="20"/>
+      <Column Name="column_name" Code="COLUMN_NAME" Comment="列名称" Type="VARCHAR" Size="200"/>
+      <Column Name="column_comment" Code="COLUMN_COMMENT" Comment="列描述" Type="VARCHAR" Size="500"/>
+      <Column Name="column_type" Code="COLUMN_TYPE" Comment="列类型" Type="VARCHAR" Size="100"/>
+      <Column Name="java_type" Code="JAVA_TYPE" Comment="JAVA类型" Type="VARCHAR" Size="500"/>
+      <Column Name="java_field" Code="JAVA_FIELD" Comment="JAVA字段名" Type="VARCHAR" Size="200"/>
+      <Column Name="is_pk" Code="IS_PK" Comment="是否主键（1是）" Type="TINYINT" Size="1"/>
+      <Column Name="is_increment" Code="IS_INCREMENT" Comment="是否自增（1是）" Type="TINYINT" Size="1"/>
+      <Column Name="is_required" Code="IS_REQUIRED" Comment="是否必填（1是）" Type="TINYINT" Size="1"/>
+      <Column Name="is_insert" Code="IS_INSERT" Comment="是否为插入字段（1是）" Type="TINYINT" Size="1"/>
+      <Column Name="is_edit" Code="IS_EDIT" Comment="是否编辑字段（1是）" Type="TINYINT" Size="1"/>
+      <Column Name="is_list" Code="IS_LIST" Comment="是否列表字段（1是）" Type="TINYINT" Size="1"/>
+      <Column Name="is_query" Code="IS_QUERY" Comment="是否查询字段（1是）" Type="TINYINT" Size="1"/>
+      <Column Name="query_type" Code="QUERY_TYPE" Comment="查询方式（等于、不等于、大于、小于、范围）" Type="VARCHAR" Size="200"/>
+      <Column Name="html_type" Code="HTML_TYPE" Comment="显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）" Type="VARCHAR" Size="200"/>
+      <Column Name="dict_type" Code="DICT_TYPE" Comment="字典类型" Type="VARCHAR" Size="200"/>
+      <Column Name="sort" Code="SORT" Comment="排序" Type="INT"/>
+      <Column Name="create_by" Code="CREATE_BY" Comment="创建者" Type="VARCHAR" Size="64"/>
+      <Column Name="create_time" Code="CREATE_TIME" Comment="创建时间" Type="DATETIME"/>
+      <Column Name="update_by" Code="UPDATE_BY" Comment="更新者" Type="VARCHAR" Size="64"/>
+      <Column Name="update_time" Code="UPDATE_TIME" Comment="更新时间" Type="DATETIME"/>
     </Table>
   </Module>
 </MDB>

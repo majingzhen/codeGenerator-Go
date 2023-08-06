@@ -14,7 +14,7 @@ import (
 
 type {{.StructName}} struct {
 {{range .Table.Columns}}
-    {{.FieldName}} {{.FieldType}} `json:"{{.JsonField}}" form:"{{.JsonField}}" gorm:"column:{{.Code}};comment:{{.Name}};{{if .Size}}size:{{.Size}};{{end}}"`
+    {{.FieldName}} {{.FieldType}} `json:"{{.JsonField}}" form:"{{.JsonField}}" gorm:"column:{{.Code}};comment:{{.Comment}};{{if .Size}}size:{{.Size}};{{end}}"`
 {{end}}
 }
 

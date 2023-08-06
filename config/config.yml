@@ -1,15 +1,15 @@
 project_name: codeGenerator-Go
 
 gen_code:
-  language: vue
+  language: go
   data_source: xml # xml,sql
   Source_file_path: ./out/out.xml # 数据源文件
   tmpl_path: ./tmpl/ # 模板文件路径
   out_path: ./out/code/
   pdm_2_xml:
     enable: false
-    Source_file_path: ./pdm/测试数据库模型 - 副本.PDM # 数据源文件
+    Source_file_path: ./pdm/manager.pdm # 数据源文件
     out_path: ./out/out.xml
-    is_model: true # 是否启用模块化
+    is_model: false # 是否启用模块化
 
 
