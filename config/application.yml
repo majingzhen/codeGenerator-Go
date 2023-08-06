@@ -2,7 +2,7 @@ project_name: codeGenerator-Go
 
 gen_code:
   language: go
-  data_source: xml # xml,sql
+  data_source: db # xml, db
   Source_file_path: ./out/out.xml # 数据源文件
   tmpl_path: ./tmpl/ # 模板文件路径
   out_path: ./out/code/
@@ -12,4 +12,15 @@ gen_code:
     out_path: ./out/out.xml
     is_model: false # 是否启用模块化
 
+logger:
+  file_path: ./log/manager.log
+
+database:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: a123456
+  db_name: manager
+  table_prefix: ""
+  log_mode: true
 
