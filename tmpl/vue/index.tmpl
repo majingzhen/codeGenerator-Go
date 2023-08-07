@@ -36,7 +36,7 @@
                     @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
                 {{range .Table.Columns}}
-                <el-table-column align="left" label="{{.Name}}" prop="{{.JsonField}}" v-if="false"/>
+                <el-table-column text-align="left" label="{{.Name}}" prop="{{.JsonField}}" v-if="false"/>
                 {{end}}
                 <el-table-column align="left" label="按钮组">
                     <template #default="scope">
@@ -68,7 +68,7 @@
     </div>
 </template>
 <script setup>
-    import { delete{{printf "%s" .StructName}}, delete{{printf "%s" .StructName}}ByIds, find{{printf "%s" .StructName}}List, get{{printf "%s" .StructName}} } from '@/api/{{printf "%s" .ObjectName}}'
+    import { delete{{printf "%s" .StructName}}, delete{{printf "%s" .StructName}}ByIds, find{{printf "%s" .StructName}}List, get{{printf "%s" .StructName}} } from '@/api/{{.ModuleName}}/{{printf "%s" .FileName}}'
     // 全量引入格式化工具 请按需保留
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { ref } from 'vue'
@@ -203,9 +203,9 @@
 </script>
 
 <script>
-    import {{printf "%s" .ObjectName}}Add from './{{printf "%s" .ObjectName}}Add.vue'
-    import {{printf "%s" .ObjectName}}Update from './{{printf "%s" .ObjectName}}Update.vue'
-    import {{printf "%s" .ObjectName}}Detail from './{{printf "%s" .ObjectName}}Detail.vue'
+    import {{printf "%s" .ObjectName}}Add from './{{printf "%s" .FileName}}_add.vue'
+    import {{printf "%s" .ObjectName}}Update from './{{printf "%s" .FileName}}_update.vue'
+    import {{printf "%s" .ObjectName}}Detail from './{{printf "%s" .FileName}}_detail.vue'
     import { defineComponent } from 'vue'
 
     const {{printf "%s" .ObjectName}}AddShow = ref(false)

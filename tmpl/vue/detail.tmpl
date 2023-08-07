@@ -3,7 +3,7 @@
         <el-dialog :model-value="visible" :before-close="handleClose" :title="name">
             <el-form :model="formData" label-position="right" label-width="80px">
             {{range .Table.Columns}}
-                <el-form-item label="{{.Name}}:"{{if eq .JsonField "id"}}style="display: none"{{end}}>
+                <el-form-item label="{{.Name}}:"{{if eq .JsonField "id"}} style="display: none"{{end}}>
                 {{if .IsTime}}<el-date-picker v-model="formData.{{.JsonField}}" type="date" style="width:100%" placeholder="请选择{{.Name}}"
                                     readonly/>
             {{else}}<el-input v-model="formData.{{.JsonField}}" clearable placeholder="请输入{{.Name}}" readonly/>

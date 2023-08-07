@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import { create{{printf "%s" .StructName}} } from '@/api/{{printf "%s" .ObjectName}}'
+    import { create{{printf "%s" .StructName}} } from '@/api/{{.ModuleName}}/{{printf "%s" .FileName}}'
     import { ElMessage} from 'element-plus'
     import { defineComponent, ref } from 'vue'
     export default defineComponent({
