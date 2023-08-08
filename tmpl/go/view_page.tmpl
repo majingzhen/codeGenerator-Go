@@ -7,9 +7,9 @@
 package {{.PackageName}}
 
 import (
-    request2 "{{.ProjectName}}/common/request"
+    "{{.ProjectName}}/common"
 )
 type {{.StructName}}ViewPage struct{
     {{.StructName}}View
-    request2.PageInfo
+    common.PageInfoV2
 }

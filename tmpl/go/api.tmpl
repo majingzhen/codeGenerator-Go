@@ -9,14 +9,12 @@ package {{.PackageName}}
 import (
     "encoding/json"
     "github.com/gin-gonic/gin"
-    uuid "github.com/satori/go.uuid"
     "go.uber.org/zap"
-    "strings"
-    "{{.ProjectName}}/out/code/{{.ModuleName}}/{{.FileName}}/service"
-    "{{.ProjectName}}/out/code/{{.ModuleName}}/{{.FileName}}/service/view"
+    "{{.ProjectName}}/{{.ModuleName}}/{{.FileName}}/service"
+    "{{.ProjectName}}/{{.ModuleName}}/{{.FileName}}/service/view"
     "{{.ProjectName}}/common"
+    response "{{.ProjectName}}/common/response"
     "{{.ProjectName}}/global"
-    "{{.ProjectName}}/common/response"
     "{{.ProjectName}}/utils"
 )
 
@@ -33,7 +31,6 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Create(c *gin.Context) {
     _ = c.ShouldBindJSON(&{{.ObjectName}}View)
     {{.ObjectName}}View.CreateTime = utils.GetCurTimeStr()
     {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
-    {{.ObjectName}}View.Id = strings.ReplaceAll(uuid.NewV4().String(), "-", "")
     if err := {{.ObjectName}}Service.Create(&{{.ObjectName}}View); err != nil {
     global.Logger.Error("创建失败!", zap.Error(err))
     response.FailWithMessage("创建失败", c)
@@ -46,9 +43,9 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Create(c *gin.Context) {
 // @Summary 删除{{.StructName}}
 // @Router /{{.ObjectName}}/delete [delete]
 func ({{.ObjectName}}Api *{{.StructName}}Api) Delete(c *gin.Context) {
-    var id common.Id
+    var id int
     _ = c.ShouldBindJSON(&id)
-    if err := {{.ObjectName}}Service.Delete(id.ID); err != nil {
+    if err := {{.ObjectName}}Service.Delete(id); err != nil {
     global.Logger.Error("删除失败!", zap.Error(err))
     response.FailWithMessage("删除失败", c)
     } else {
@@ -60,9 +57,9 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Delete(c *gin.Context) {
 // @Summary 批量删除{{.StructName}}
 // @Router /{{.ObjectName}}/deleteByIds [delete]
 func ({{.ObjectName}}Api *{{.StructName}}Api) DeleteByIds(c *gin.Context) {
-    var ids common.Ids
+    var ids []int
     _ = c.ShouldBindJSON(&ids)
-    if err := {{.ObjectName}}Service.DeleteByIds(ids.Ids); err != nil {
+    if err := {{.ObjectName}}Service.DeleteByIds(ids); err != nil {
     global.Logger.Error("批量删除失败!", zap.Error(err))
     response.FailWithMessage("批量删除失败", c)
     } else {
@@ -75,15 +72,20 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) DeleteByIds(c *gin.Context) {
 // @Router /{{.ObjectName}}/update [put]
 func ({{.ObjectName}}Api *{{.StructName}}Api) Update(c *gin.Context) {
     id := c.Query("id")
-    {{.ObjectName}}ViewJson := c.Query("{{.ObjectName}}View")
-    var {{.ObjectName}}View view.{{.StructName}}View
-    err := json.Unmarshal([]byte({{.ObjectName}}ViewJson), &{{.ObjectName}}View)
-    {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
-    if err := {{.ObjectName}}Service.Update(id, &{{.ObjectName}}View); err != nil {
+    atoi, err := strconv.Atoi(id)
+    if err != nil {
         global.Logger.Error("更新解析上报数据失败!", zap.Error(err))
         response.FailWithMessage("更新失败", c)
     }
-    if err = {{.ObjectName}}Service.Update(id, &{{.ObjectName}}View); err != nil {
+    {{.ObjectName}}ViewJson := c.Query("{{.ObjectName}}View")
+    var {{.ObjectName}}View view.{{.StructName}}View
+    err = json.Unmarshal([]byte({{.ObjectName}}ViewJson), &{{.ObjectName}}View)
+    {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
+    if err := {{.ObjectName}}Service.Update(atoi, &{{.ObjectName}}View); err != nil {
+        global.Logger.Error("更新解析上报数据失败!", zap.Error(err))
+        response.FailWithMessage("更新失败", c)
+    }
+    if err = {{.ObjectName}}Service.Update(atoi, &{{.ObjectName}}View); err != nil {
     global.Logger.Error("更新持久化失败!", zap.Error(err))
         response.FailWithMessage("更新失败", c)
     } else {
@@ -96,8 +98,13 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Update(c *gin.Context) {
 // @Router /{{.ObjectName}}/get [get]
 func ({{.ObjectName}}Api *{{.StructName}}Api) Get(c *gin.Context) {
     id := c.Query("id")
-    if err, {{.ObjectName}}View := {{.ObjectName}}Service.Get(id); err != nil {
-    global.Logger.Error("查询失败!", zap.Error(err))
+    atoi, err := strconv.Atoi(id)
+    if err != nil {
+        global.Logger.Error("查询失败!", zap.Error(err))
+        response.FailWithMessage("更新失败", c)
+    }
+    if err, {{.ObjectName}}View := {{.ObjectName}}Service.Get(atoi); err != nil {
+        global.Logger.Error("查询失败!", zap.Error(err))
         response.FailWithMessage("查询失败", c)
     } else {
         response.OkWithData(gin.H{"{{.ObjectName}}View": {{.ObjectName}}View}, c)

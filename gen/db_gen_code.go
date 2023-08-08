@@ -3,7 +3,6 @@ package gen
 import (
 	"codeGenerator-Go/gen/model"
 	"codeGenerator-Go/global"
-	"codeGenerator-Go/utils"
 	"fmt"
 	"strings"
 )
@@ -15,7 +14,7 @@ type TableInfo struct {
 
 type ColumnInfo struct {
 	ColumnName             string `gorm:"column:COLUMN_NAME"`
-	ColumnType             string `gorm:"column:COLUMN_TYPE"`
+	DataType               string `gorm:"column:DATA_TYPE"`
 	CharacterMaximumLength string `gorm:"column:CHARACTER_MAXIMUM_LENGTH"`
 	ColumnComment          string `gorm:"column:COLUMN_COMMENT"`
 }
@@ -47,42 +46,31 @@ func DbGenCode() {
 				madelTable.Code = tables[i].TableName
 				madelTable.Comment = tables[i].TableComment
 				// 处理字段
-				getColumnByTableName(madelTable.Name)
+				columns := getColumnByTableName(madelTable.Code)
+				madelTable.Columns = columns
 				modelTables = append(modelTables, madelTable)
 			}
 		}
+
 		modelObj.Tables = modelTables
 		models = append(models, modelObj)
 	}
 
-	//file, err := os.ReadFile(xmlFilePath)
-	//if err != nil {
-	//	fmt.Printf("error:%v\n", err)
-	//}
-	//v := &model.MDB{}
-	//err = xml.Unmarshal(file, &v)
-	//if err != nil {
-	//	fmt.Printf("error:%v\n", err)
-	//}
-	//genLanguage(v)
 	GenLanguage(models)
 }
 
 func getColumnByTableName(tableName string) (res []model.Column) {
 	var columns []ColumnInfo
-	err := global.GOrmDao.Raw("SELECT column_name,column_type,CHARACTER_MAXIMUM_LENGTH,COLUMN_COMMENT FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?;", global.GVA_VP.GetString("database.db_name"), tableName).Scan(&columns).Error
+	err := global.GOrmDao.Raw("SELECT COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,COLUMN_COMMENT FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?;", global.GVA_VP.GetString("database.db_name"), tableName).Scan(&columns).Error
 	if err != nil {
 		// 处理错误
 		fmt.Printf("error:%v\n", err)
 	}
 	for _, dbColumn := range columns {
 		var column model.Column
-		column.FieldName = utils.ToTitle(dbColumn.ColumnName)
-		column.JsonField = utils.ToCamelCase(dbColumn.ColumnName)
-		column.FieldType = utils.ConvertDbTypeToGoType(dbColumn.ColumnType)
-		if column.FieldType == "time.Time" {
-			column.IsTime = true
-		}
+		column.Code = dbColumn.ColumnName
+		column.Type = dbColumn.DataType
+		res = append(res, column)
 	}
 	return
 }

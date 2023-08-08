@@ -8,8 +8,8 @@ package {{.PackageName}}
 
 import (
     "github.com/gin-gonic/gin"
-    "{{.ProjectName}}/out/code/{{.ModuleName}}/{{.FileName}}/api"
-    // "{{.ProjectName}}/frame/middleware"
+    "{{.ProjectName}}/{{.ModuleName}}/{{.FileName}}/api"
+    "{{.ProjectName}}/middleware"
 )
 
 type {{.StructName}}Router struct { }
@@ -18,8 +18,7 @@ var {{.ObjectName}}Api = api.{{.StructName}}ApiApp
 
 // Init{{.StructName}}Router 初始化 {{.StructName}} 路由信息
 func (r *{{.StructName}}Router) Init{{.StructName}}Router(Router *gin.RouterGroup) {
-    //{{.ObjectName}}Router := Router.Group("{{.ObjectName}}").Use(middleware.OperationRecord())
-    {{.ObjectName}}Router := Router.Group("{{.ObjectName}}")
+    {{.ObjectName}}Router := Router.Group("{{.ObjectName}}").Use(middleware.JWTAuthFilter())
     {{.ObjectName}}RouterWithoutRecord := Router.Group("{{.ObjectName}}")
     {
         {{.ObjectName}}Router.POST("create", {{.ObjectName}}Api.Create)             // 新建{{.StructName}}
