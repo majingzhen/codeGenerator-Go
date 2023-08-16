@@ -1,13 +1,14 @@
-project_name: manager-gin/src/app/admin
-
+project:
+  import_path: manager-gin/src
+  code_path: app/admin
 gen_code:
   language: go
-  data_source: db # xml, db
+  data_source: xml # xml, db
   Source_file_path: ./out/out.xml # 数据源文件
   tmpl_path: ./tmpl/ # 模板文件路径
   out_path: ./out/code/
   pdm_2_xml:
-    enable: true
+    enable: false
     Source_file_path: ./pdm/测试数据库模型 - 副本.PDM # 数据源文件
     out_path: ./out/out.xml
     is_model: true # 是否启用模块化

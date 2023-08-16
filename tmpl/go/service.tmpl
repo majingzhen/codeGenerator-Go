@@ -7,9 +7,9 @@
 package {{.PackageName}}
 
 import (
-    "{{.ProjectName}}/common"
-    "{{.ProjectName}}/{{.ModuleName}}/{{.FileName}}/model"
-    "{{.ProjectName}}/{{.ModuleName}}/{{.FileName}}/service/view"
+    "{{.ImportPath}}/common"
+    "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/model"
+    "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service/view"
 )
 var {{.ObjectName}}Dao = model.{{.StructName}}DaoApp
 var viewUtils = view.{{.StructName}}ViewUtilsApp

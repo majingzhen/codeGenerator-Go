@@ -10,12 +10,13 @@ import (
     "encoding/json"
     "github.com/gin-gonic/gin"
     "go.uber.org/zap"
-    "{{.ProjectName}}/{{.ModuleName}}/{{.FileName}}/service"
-    "{{.ProjectName}}/{{.ModuleName}}/{{.FileName}}/service/view"
-    "{{.ProjectName}}/common"
-    response "{{.ProjectName}}/common/response"
-    "{{.ProjectName}}/global"
-    "{{.ProjectName}}/utils"
+    "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service"
+    "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service/view"
+    "{{.ImportPath}}/common"
+    response "{{.ImportPath}}/common/response"
+    "{{.ImportPath}}/global"
+    "{{.ImportPath}}/utils"
+    "strconv"
 )
 
 type {{.StructName}}Api struct {

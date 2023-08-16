@@ -29,34 +29,34 @@ func GenLanguage(modules []model.Module) {
 	switch global.GVA_VP.GetString("gen_code.language") {
 	case "go":
 		// 生成model
-		genCode(modules, "./tmpl/go/model.tmpl", "model", "", "", false)
-		genCode(modules, "./tmpl/go/dao.tmpl", "model", "dao", "", false)
-		genCode(modules, "./tmpl/go/dao_init.tmpl", "model", "", "", true)
+		genCode(modules, "./tmpl/go/model.tmpl", "model", "", "", false, false)
+		genCode(modules, "./tmpl/go/dao.tmpl", "model", "_dao", "", false, false)
+		genCode(modules, "./tmpl/go/dao_init.tmpl", "model", "", "", true, false)
 
 		// 生成service
-		genCode(modules, "./tmpl/go/service.tmpl", "service", "service", "", false)
-		genCode(modules, "./tmpl/go/service_init.tmpl", "service", "", "", true)
-		genCode(modules, "./tmpl/go/view.tmpl", "view", "view", "service", false)
-		genCode(modules, "./tmpl/go/view_page.tmpl", "view", "view_page", "service", false)
-		genCode(modules, "./tmpl/go/view_utils.tmpl", "view", "view_utils", "service", false)
-		genCode(modules, "./tmpl/go/view_init.tmpl", "view", "", "service", true)
+		genCode(modules, "./tmpl/go/service.tmpl", "service", "_service", "", false, false)
+		genCode(modules, "./tmpl/go/service_init.tmpl", "service", "", "", true, false)
+		genCode(modules, "./tmpl/go/view.tmpl", "view", "_view", "service", false, false)
+		genCode(modules, "./tmpl/go/view_page.tmpl", "view", "_view_page", "service", false, false)
+		genCode(modules, "./tmpl/go/view_utils.tmpl", "view", "_view_utils", "service", false, false)
+		genCode(modules, "./tmpl/go/view_init.tmpl", "view", "", "service", true, false)
 		// 生成api
-		genCode(modules, "./tmpl/go/api.tmpl", "api", "api", "", false)
-		genCode(modules, "./tmpl/go/api_init.tmpl", "api", "", "", true)
+		genCode(modules, "./tmpl/go/api.tmpl", "api", "_api", "", false, false)
+		genCode(modules, "./tmpl/go/api_init.tmpl", "api", "", "", true, false)
 		// 生成router
-		genCode(modules, "./tmpl/go/router.tmpl", "router", "router", "", false)
+		genCode(modules, "./tmpl/go/router.tmpl", "router", "_router", "", false, false)
 	case "vue":
 		// 生成vue
-		genCode(modules, "./tmpl/vue/index.tmpl", "", "", "", false)
-		genCode(modules, "./tmpl/vue/add.tmpl", "", "add", "", false)
-		genCode(modules, "./tmpl/vue/update.tmpl", "", "update", "", false)
-		genCode(modules, "./tmpl/vue/detail.tmpl", "", "detail", "", false)
-		genCode(modules, "./tmpl/vue/js.tmpl", "", "", "js", true)
+		genCode(modules, "./tmpl/vue/index.tmpl", "", "", "", false, true)
+		genCode(modules, "./tmpl/vue/add.tmpl", "", "_add", "", false, false)
+		genCode(modules, "./tmpl/vue/update.tmpl", "", "_update", "", false, false)
+		genCode(modules, "./tmpl/vue/detail.tmpl", "", "_detail", "", false, false)
+		genCode(modules, "./tmpl/vue/js.tmpl", "", "", "js", true, false)
 	}
 
 }
 
-func genCode(modules []model.Module, tmplFile string, packageName, suffix string, appendPage string, isInit bool) {
+func genCode(modules []model.Module, tmplFile string, packageName, suffix string, appendPage string, isInit bool, isIndex bool) {
 	model, err := os.ReadFile(tmplFile)
 	if err != nil {
 		fmt.Printf("error:%v\n", err)
@@ -66,24 +66,30 @@ func genCode(modules []model.Module, tmplFile string, packageName, suffix string
 		fmt.Printf("error:%v\n", err)
 	}
 	for _, module := range modules {
-		handleTable(&module, template, packageName, suffix, appendPage, isInit)
+		handleTable(&module, template, packageName, suffix, appendPage, isInit, isIndex)
 	}
 }
 
-func handleTable(module *model.Module, template *template.Template, packageName, suffix string, appendPage string, isInit bool) {
+func handleTable(module *model.Module, template *template.Template, packageName, suffix string, appendPage string, isInit bool, isIndex bool) {
 	tables := module.Tables
 	for j := 0; j < len(tables); j++ {
 		var templateModel model.TemplateModel
 		// 字段处理
 		table := &tables[j]
 		templateModel.StructName = utils.ToTitle(table.Code)
-		templateModel.FileName = strings.ToLower(table.Code)
+		if isIndex {
+			templateModel.FileName = "index"
+		} else {
+			templateModel.FileName = strings.ToLower(table.Code)
+		}
+		templateModel.LastPathName = strings.ToLower(table.Code)
 		templateModel.ObjectName = utils.ToCamelCase(table.Code)
 		templateModel.DateTime = utils.GetCurTimeStr()
 		templateModel.Author = table.DBCreator
 		templateModel.PackageName = packageName
 		templateModel.ModuleName = module.Code
-		templateModel.ProjectName = global.GVA_VP.GetString("project_name")
+		templateModel.ImportPath = global.GVA_VP.GetString("project.import_path")
+		templateModel.CodePath = global.GVA_VP.GetString("project.code_path")
 		for k := range table.Columns {
 			column := &table.Columns[k]
 			column.FieldName = utils.ToTitle(column.Code)
@@ -98,9 +104,9 @@ func handleTable(module *model.Module, template *template.Template, packageName,
 		filePath = global.GVA_VP.GetString("gen_code.out_path") + global.GVA_VP.GetString("gen_code.language") + "/"
 
 		if appendPage != "" {
-			filePath += module.Code + "/" + templateModel.FileName + "/" + appendPage + "/" + templateModel.PackageName + "/"
+			filePath += module.Code + "/" + templateModel.LastPathName + "/" + appendPage + "/" + templateModel.PackageName + "/"
 		} else {
-			filePath += module.Code + "/" + templateModel.FileName + "/" + templateModel.PackageName + "/"
+			filePath += module.Code + "/" + templateModel.LastPathName + "/" + templateModel.PackageName + "/"
 		}
 		// 判断文件夹是否存在
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
@@ -119,7 +125,7 @@ func handleTable(module *model.Module, template *template.Template, packageName,
 			path = filePath + templateModel.FileName + ".js"
 		} else {
 			if suffix != "" {
-				path = filePath + templateModel.FileName + "_" + suffix + "." + global.GVA_VP.GetString("gen_code.language")
+				path = filePath + templateModel.FileName + suffix + "." + global.GVA_VP.GetString("gen_code.language")
 			} else {
 				path = filePath + templateModel.FileName + "." + global.GVA_VP.GetString("gen_code.language")
 			}
