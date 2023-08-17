@@ -203,9 +203,9 @@
 </script>
 
 <script>
-    import {{printf "%s" .ObjectName}}Add from './{{printf "%s" .FileName}}_add.vue'
-    import {{printf "%s" .ObjectName}}Update from './{{printf "%s" .FileName}}_update.vue'
-    import {{printf "%s" .ObjectName}}Detail from './{{printf "%s" .FileName}}_detail.vue'
+    import {{printf "%s" .ObjectName}}Add from './{{printf "%s" .LastPathName}}_add.vue'
+    import {{printf "%s" .ObjectName}}Update from './{{printf "%s" .LastPathName}}_update.vue'
+    import {{printf "%s" .ObjectName}}Detail from './{{printf "%s" .LastPathName}}_detail.vue'
     import { defineComponent } from 'vue'
 
     const {{printf "%s" .ObjectName}}AddShow = ref(false)
