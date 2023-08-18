@@ -9,14 +9,12 @@ package {{.PackageName}}
 import (
     "github.com/gin-gonic/gin"
     "go.uber.org/zap"
-    uuid "github.com/satori/go.uuid"
     "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service"
     "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service/view"
     "{{.ImportPath}}/common"
     response "{{.ImportPath}}/common/response"
     "{{.ImportPath}}/global"
     "{{.ImportPath}}/utils"
-    "strings"
 )
 
 type {{.StructName}}Api struct {
