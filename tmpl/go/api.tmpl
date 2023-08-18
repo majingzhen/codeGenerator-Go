@@ -45,8 +45,9 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Create(c *gin.Context) {
 // @Summary 删除{{.StructName}}
 // @Router /{{.ObjectName}}/delete [delete]
 func ({{.ObjectName}}Api *{{.StructName}}Api) Delete(c *gin.Context) {
-    id := c.Query("id")
-    if err := {{.ObjectName}}Service.Delete(id); err != nil {
+    var id common.Id
+    _ = c.ShouldBindJSON(&id)
+    if err := {{.ObjectName}}Service.Delete(id.ID); err != nil {
     global.Logger.Error("删除失败!", zap.Error(err))
     response.FailWithMessage("删除失败", c)
     } else {
@@ -58,8 +59,9 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Delete(c *gin.Context) {
 // @Summary 批量删除{{.StructName}}
 // @Router /{{.ObjectName}}/deleteByIds [delete]
 func ({{.ObjectName}}Api *{{.StructName}}Api) DeleteByIds(c *gin.Context) {
-    ids := c.QueryArray("ids")
-    if err := {{.ObjectName}}Service.DeleteByIds(ids); err != nil {
+    var ids common.Ids
+    _ = c.ShouldBindJSON(&ids)
+    if err := {{.ObjectName}}Service.DeleteByIds(ids.Ids); err != nil {
     global.Logger.Error("批量删除失败!", zap.Error(err))
     response.FailWithMessage("批量删除失败", c)
     } else {
