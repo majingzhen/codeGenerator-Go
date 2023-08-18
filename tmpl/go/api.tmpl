@@ -30,6 +30,7 @@ var {{.ObjectName}}Service = service.{{.StructName}}ServiceApp
 func ({{.ObjectName}}Api *{{.StructName}}Api) Create(c *gin.Context) {
     var {{.ObjectName}}View view.{{.StructName}}View
     _ = c.ShouldBindJSON(&{{.ObjectName}}View)
+    {{.ObjectName}}View.Id = strings.ReplaceAll(uuid.NewV4().String(), "-", "")
     {{.ObjectName}}View.CreateTime = utils.GetCurTimeStr()
     {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
     if err := {{.ObjectName}}Service.Create(&{{.ObjectName}}View); err != nil {
@@ -44,8 +45,7 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Create(c *gin.Context) {
 // @Summary 删除{{.StructName}}
 // @Router /{{.ObjectName}}/delete [delete]
 func ({{.ObjectName}}Api *{{.StructName}}Api) Delete(c *gin.Context) {
-    var id int
-    _ = c.ShouldBindJSON(&id)
+    id := c.Query("id")
     if err := {{.ObjectName}}Service.Delete(id); err != nil {
     global.Logger.Error("删除失败!", zap.Error(err))
     response.FailWithMessage("删除失败", c)
@@ -58,8 +58,7 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Delete(c *gin.Context) {
 // @Summary 批量删除{{.StructName}}
 // @Router /{{.ObjectName}}/deleteByIds [delete]
 func ({{.ObjectName}}Api *{{.StructName}}Api) DeleteByIds(c *gin.Context) {
-    var ids []int
-    _ = c.ShouldBindJSON(&ids)
+    ids := c.QueryArray("ids")
     if err := {{.ObjectName}}Service.DeleteByIds(ids); err != nil {
     global.Logger.Error("批量删除失败!", zap.Error(err))
     response.FailWithMessage("批量删除失败", c)
@@ -72,21 +71,14 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) DeleteByIds(c *gin.Context) {
 // @Summary 更新{{.StructName}}
 // @Router /{{.ObjectName}}/update [put]
 func ({{.ObjectName}}Api *{{.StructName}}Api) Update(c *gin.Context) {
-    id := c.Query("id")
-    atoi, err := strconv.Atoi(id)
-    if err != nil {
-        global.Logger.Error("更新解析上报数据失败!", zap.Error(err))
-        response.FailWithMessage("更新失败", c)
-    }
-    {{.ObjectName}}ViewJson := c.Query("{{.ObjectName}}View")
     var {{.ObjectName}}View view.{{.StructName}}View
-    err = json.Unmarshal([]byte({{.ObjectName}}ViewJson), &{{.ObjectName}}View)
-    {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
-    if err := {{.ObjectName}}Service.Update(atoi, &{{.ObjectName}}View); err != nil {
-        global.Logger.Error("更新解析上报数据失败!", zap.Error(err))
+    _ = c.ShouldBindJSON(&{{.ObjectName}}View)
+    id := {{.ObjectName}}View.Id
+    if id == "" {
         response.FailWithMessage("更新失败", c)
     }
-    if err = {{.ObjectName}}Service.Update(atoi, &{{.ObjectName}}View); err != nil {
+    {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
+    if err := {{.ObjectName}}Service.Update(id, &{{.ObjectName}}View); err != nil {
     global.Logger.Error("更新持久化失败!", zap.Error(err))
         response.FailWithMessage("更新失败", c)
     } else {
@@ -99,12 +91,7 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Update(c *gin.Context) {
 // @Router /{{.ObjectName}}/get [get]
 func ({{.ObjectName}}Api *{{.StructName}}Api) Get(c *gin.Context) {
     id := c.Query("id")
-    atoi, err := strconv.Atoi(id)
-    if err != nil {
-        global.Logger.Error("查询失败!", zap.Error(err))
-        response.FailWithMessage("更新失败", c)
-    }
-    if err, {{.ObjectName}}View := {{.ObjectName}}Service.Get(atoi); err != nil {
+    if err, {{.ObjectName}}View := {{.ObjectName}}Service.Get(id); err != nil {
         global.Logger.Error("查询失败!", zap.Error(err))
         response.FailWithMessage("查询失败", c)
     } else {
@@ -115,10 +102,16 @@ func ({{.ObjectName}}Api *{{.StructName}}Api) Get(c *gin.Context) {
 // Find 分页获取{{.StructName}}列表
 // @Summary 分页获取{{.StructName}}列表
 // @Router /{{.ObjectName}}/find [get]
-func ({{.ObjectName}}Api *{{.StructName}}Api) Find(c *gin.Context) { var pageInfo common.PageInfoV2
-    _ = c.ShouldBindQuery(&pageInfo)
+func ({{.ObjectName}}Api *{{.StructName}}Api) Find(c *gin.Context) {
+    var pageInfo common.PageInfoV2
+    // 绑定查询参数到 pageInfo
+    if err := c.ShouldBindQuery(&pageInfo); err != nil {
+        response.FailWithMessage("获取分页数据解析失败!", c)
+    }
+    // 调用 Calculate 方法自动计算 Limit 和 Offset
+    pageInfo.Calculate()
     if err := {{.ObjectName}}Service.Find(&pageInfo); err != nil {
-    global.Logger.Error("获取分页信息失败!", zap.Error(err))
+        global.Logger.Error("获取分页信息失败!", zap.Error(err))
         response.FailWithMessage("获取失败", c)
     } else {
         response.OkWithDetailed(pageInfo, "获取成功", c)

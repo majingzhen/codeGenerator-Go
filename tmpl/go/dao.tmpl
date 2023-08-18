@@ -24,14 +24,14 @@ func (dao *{{.StructName}}Dao) Create({{.ObjectName}} {{.StructName}}) (err erro
 
 // Delete 删除{{.StructName}}记录
 // Author {{.Author}}
-func (dao *{{.StructName}}Dao) Delete(id int) (err error) {
+func (dao *{{.StructName}}Dao) Delete(id string) (err error) {
     err = global.GOrmDao.Delete(&[]{{.StructName}}{}, "id = ?", id).Error
     return err
 }
 
 // DeleteByIds 批量删除{{.StructName}}记录
 // Author {{.Author}}
-func (dao *{{.StructName}}Dao) DeleteByIds(ids []int) (err error) {
+func (dao *{{.StructName}}Dao) DeleteByIds(ids []string) (err error) {
     err = global.GOrmDao.Delete(&[]{{.StructName}}{}, "id in ?", ids).Error
     return err
 }
@@ -45,7 +45,7 @@ func (dao *{{.StructName}}Dao) Update({{.ObjectName}} {{.StructName}}) (err erro
 
 // Get 根据id获取{{.StructName}}记录
 // Author {{.Author}}
-func (dao *{{.StructName}}Dao) Get(id int) (err error, {{.ObjectName}} *{{.StructName}}) {
+func (dao *{{.StructName}}Dao) Get(id string) (err error, {{.ObjectName}} *{{.StructName}}) {
     err = global.GOrmDao.Where("id = ?", id).First(&{{.ObjectName}}).Error
     return
 }

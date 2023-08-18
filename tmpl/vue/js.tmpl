@@ -11,7 +11,7 @@ export const create{{.StructName}} = (data) => {
 }
 
 // @Summary 删除{{.StructName}}
-// @Router /{{.ObjectName}}/delete{{.StructName}} [delete]
+// @Router {{.ModelName}}/{{.ObjectName}}/delete{{.StructName}} [delete]
 export const delete{{.StructName}} = (data) => {
     return service({
         url: '/{{.ObjectName}}/delete',
@@ -32,11 +32,11 @@ export const delete{{.StructName}}ByIds = (data) => {
 
 // @Summary 更新{{.StructName}}
 // @Router /{{.ObjectName}}/update{{.StructName}} [put]
-export const update{{.StructName}} = (params) => {
+export const update{{.StructName}} = (data) => {
     return service({
         url: '/{{.ObjectName}}/update',
         method: 'post',
-        params,
+        data,
     })
 }
 

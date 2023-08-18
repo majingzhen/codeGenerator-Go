@@ -2,7 +2,7 @@ project:
   import_path: manager-gin/src
   code_path: app/admin
 gen_code:
-  language: go
+  language: vue
   data_source: xml # xml, db
   Source_file_path: ./out/out.xml # 数据源文件
   tmpl_path: ./tmpl/ # 模板文件路径

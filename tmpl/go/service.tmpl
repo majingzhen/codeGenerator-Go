@@ -32,21 +32,21 @@ func ({{.ObjectName}}Service *{{.StructName}}Service) Create({{.ObjectName}}View
 
 // Delete 删除{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Delete(id int) (err error) {
+func ({{.ObjectName}}Service *{{.StructName}}Service) Delete(id string) (err error) {
     err = {{.ObjectName}}Dao.Delete(id)
         return err
     }
 
 // DeleteByIds 批量删除{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) DeleteByIds(ids []int) (err error) {
+func ({{.ObjectName}}Service *{{.StructName}}Service) DeleteByIds(ids []string) (err error) {
     err = {{.ObjectName}}Dao.DeleteByIds(ids)
         return err
     }
 
 // Update 更新{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Update(id int, {{.ObjectName}}View *view.{{.StructName}}View) (err error) {
+func ({{.ObjectName}}Service *{{.StructName}}Service) Update(id string, {{.ObjectName}}View *view.{{.StructName}}View) (err error) {
     {{.ObjectName}}View.Id = id
     err1, {{.ObjectName}} := viewUtils.View2Data({{.ObjectName}}View)
     if err1 != nil {
@@ -58,7 +58,7 @@ func ({{.ObjectName}}Service *{{.StructName}}Service) Update(id int, {{.ObjectNa
 
 // Get 根据id获取{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Get(id int) (err error, {{.ObjectName}}View *view.{{.StructName}}View) {
+func ({{.ObjectName}}Service *{{.StructName}}Service) Get(id string) (err error, {{.ObjectName}}View *view.{{.StructName}}View) {
     err1, {{.ObjectName}} := {{.ObjectName}}Dao.Get(id)
     if err1 != nil {
         return err1, nil

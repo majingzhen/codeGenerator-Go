@@ -60,11 +60,7 @@
 
             // 弹窗确定
             const enterDialog = async() => {
-                const params = {
-                    id: formData.value.id,
-                    {{printf "%s" .ObjectName}}View: formData.value
-                }
-                let res = await update{{printf "%s" .StructName}}(params)
+                let res = await update{{printf "%s" .StructName}}(formData.value)
                 if (res.code === 0) {
                     ElMessage({
                         type: 'success',

@@ -18,7 +18,8 @@ var {{.ObjectName}}Api = api.{{.StructName}}ApiApp
 
 // Init{{.StructName}}Router 初始化 {{.StructName}} 路由信息
 func (r *{{.StructName}}Router) Init{{.StructName}}Router(Router *gin.RouterGroup) {
-    {{.ObjectName}}Router := Router.Group("{{.ObjectName}}").Use(middleware.JWTAuthFilter())
+    {{.ObjectName}}Router := Router.Group("{{.ObjectName}}")
+    {{.ObjectName}}Router.Use(middleware.JWTAuthFilter())
     {{.ObjectName}}RouterWithoutRecord := Router.Group("{{.ObjectName}}")
     {
         {{.ObjectName}}Router.POST("create", {{.ObjectName}}Api.Create)             // 新建{{.StructName}}

@@ -36,7 +36,7 @@
                     @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"/>
                 {{range .Table.Columns}}
-                <el-table-column text-align="left" label="{{.Name}}" prop="{{.JsonField}}" v-if="false"/>
+                    {{if (eq .JsonField "id")}}<el-table-column text-align="left" label="{{.Name}}" prop="{{.JsonField}}" v-if="false"/>{{else}}<el-table-column text-align="left" label="{{.Name}}" prop="{{.JsonField}}"/>{{end}}
                 {{end}}
                 <el-table-column align="left" label="按钮组">
                     <template #default="scope">
@@ -68,7 +68,7 @@
     </div>
 </template>
 <script setup>
-    import { delete{{printf "%s" .StructName}}, delete{{printf "%s" .StructName}}ByIds, find{{printf "%s" .StructName}}List, get{{printf "%s" .StructName}} } from '@/api/{{.ModuleName}}/{{printf "%s" .FileName}}'
+    import { delete{{printf "%s" .StructName}}, delete{{printf "%s" .StructName}}ByIds, find{{printf "%s" .StructName}}List, get{{printf "%s" .StructName}} } from '@/api/{{.ModuleName}}/{{printf "%s" .LastPathName}}'
     // 全量引入格式化工具 请按需保留
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { ref } from 'vue'
