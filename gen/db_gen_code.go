@@ -70,6 +70,7 @@ func getColumnByTableName(tableName string) (res []model.Column) {
 		var column model.Column
 		column.Code = dbColumn.ColumnName
 		column.Type = dbColumn.DataType
+		column.Comment = dbColumn.ColumnComment
 		res = append(res, column)
 	}
 	return

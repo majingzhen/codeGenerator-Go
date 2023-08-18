@@ -9,6 +9,8 @@ func ConvertDbTypeToGoType(dbType string) string {
 		return "int"
 	case "varchar":
 		return "string"
+	case "char":
+		return "string"
 	case "text":
 		return "string"
 	case "float":

@@ -7,16 +7,16 @@
 package {{.PackageName}}
     
 import (
-    "encoding/json"
     "github.com/gin-gonic/gin"
     "go.uber.org/zap"
+    uuid "github.com/satori/go.uuid"
     "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service"
     "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service/view"
     "{{.ImportPath}}/common"
     response "{{.ImportPath}}/common/response"
     "{{.ImportPath}}/global"
     "{{.ImportPath}}/utils"
-    "strconv"
+    "strings"
 )
 
 type {{.StructName}}Api struct {
@@ -30,7 +30,7 @@ var {{.ObjectName}}Service = service.{{.StructName}}ServiceApp
 func ({{.ObjectName}}Api *{{.StructName}}Api) Create(c *gin.Context) {
     var {{.ObjectName}}View view.{{.StructName}}View
     _ = c.ShouldBindJSON(&{{.ObjectName}}View)
-    {{.ObjectName}}View.Id = strings.ReplaceAll(uuid.NewV4().String(), "-", "")
+    {{.ObjectName}}View.Id = utils.GenUID()
     {{.ObjectName}}View.CreateTime = utils.GetCurTimeStr()
     {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
     if err := {{.ObjectName}}Service.Create(&{{.ObjectName}}View); err != nil {
