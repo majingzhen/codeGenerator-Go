@@ -18,7 +18,7 @@ type {{.StructName}}Service struct {}
 
 // Create 创建{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Create({{.ObjectName}}View *view.{{.StructName}}View) (err error) {
+func (service *{{.StructName}}Service) Create({{.ObjectName}}View *view.{{.StructName}}View) (err error) {
     err1, {{.ObjectName}} := viewUtils.View2Data({{.ObjectName}}View)
     if err1 != nil {
         return err1
@@ -32,21 +32,21 @@ func ({{.ObjectName}}Service *{{.StructName}}Service) Create({{.ObjectName}}View
 
 // Delete 删除{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Delete(id string) (err error) {
+func (service *{{.StructName}}Service) Delete(id string) (err error) {
     err = {{.ObjectName}}Dao.Delete(id)
         return err
     }
 
 // DeleteByIds 批量删除{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) DeleteByIds(ids []string) (err error) {
+func (service *{{.StructName}}Service) DeleteByIds(ids []string) (err error) {
     err = {{.ObjectName}}Dao.DeleteByIds(ids)
         return err
     }
 
 // Update 更新{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Update(id string, {{.ObjectName}}View *view.{{.StructName}}View) (err error) {
+func (service *{{.StructName}}Service) Update(id string, {{.ObjectName}}View *view.{{.StructName}}View) (err error) {
     {{.ObjectName}}View.Id = id
     err1, {{.ObjectName}} := viewUtils.View2Data({{.ObjectName}}View)
     if err1 != nil {
@@ -58,7 +58,7 @@ func ({{.ObjectName}}Service *{{.StructName}}Service) Update(id string, {{.Objec
 
 // Get 根据id获取{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Get(id string) (err error, {{.ObjectName}}View *view.{{.StructName}}View) {
+func (service *{{.StructName}}Service) Get(id string) (err error, {{.ObjectName}}View *view.{{.StructName}}View) {
     err1, {{.ObjectName}} := {{.ObjectName}}Dao.Get(id)
     if err1 != nil {
         return err1, nil
@@ -70,18 +70,24 @@ func ({{.ObjectName}}Service *{{.StructName}}Service) Get(id string) (err error,
         return
 }
 
-// Find 分页获取{{.StructName}}记录
+// List 分页获取{{.StructName}}记录
 // Author {{.Author}}
-func ({{.ObjectName}}Service *{{.StructName}}Service) Find(info *common.PageInfoV2) (err error) {
-    err1, {{.ObjectName}}s, total := {{.ObjectName}}Dao.Find(info)
+func (service *{{.StructName}}Service) List(pageInfo *view.{{.StructName}}PageView) (err error, res *common.PageInfo) {
+    err, param, page := viewUtils.Page2Data(pageInfo)
+    if err != nil {
+        return err, nil
+    }
+    err1, datas, total := {{.ObjectName}}Dao.List(param, page)
     if err1 != nil {
-        return err1
+        return err1, res
     }
-    info.Total = total
-    err2, viewList := viewUtils.Data2ViewList({{.ObjectName}}s)
+    err2, viewList := viewUtils.Data2ViewList(datas)
     if err2 != nil {
-        return err2
+        return err2, res
     }
-    info.FormList = viewList
-    return err
+    res = &common.PageInfo{
+        Total: total,
+        Rows:  viewList,
+    }
+    return err, res
 }

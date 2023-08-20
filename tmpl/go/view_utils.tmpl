@@ -12,12 +12,13 @@ import (
     "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/model"
     "{{.ImportPath}}/global"
     "{{.ImportPath}}/utils"
+    "{{.ImportPath}}/common"
 )
 
 type {{.StructName}}ViewUtils struct { }
 
 
-func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2View(data *model.{{.StructName}}) (err error, view *{{.StructName}}View) {
+func (viewUtils *{{.StructName}}ViewUtils) Data2View(data *model.{{.StructName}}) (err error, view *{{.StructName}}View) {
     defer func() {
         if e := recover(); e != nil {
             err = fmt.Errorf("{{.StructName}}ViewUtils View2Data error: %v", e)
@@ -32,7 +33,7 @@ func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2View(data *model.
     view = &tmp
     return
 }
-func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) View2Data(view *{{.StructName}}View) (err error, data *model.{{.StructName}}) {
+func (viewUtils *{{.StructName}}ViewUtils) View2Data(view *{{.StructName}}View) (err error, data *model.{{.StructName}}) {
     defer func() {
         if e := recover(); e != nil {
             err = fmt.Errorf("{{.StructName}}ViewUtils View2Data error: %v", e)
@@ -48,7 +49,30 @@ func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) View2Data(view *{{.Str
     return
 }
 
-func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) View2DataList(viewList *[]{{.StructName}}View) (err error, dataList *[]model.{{.StructName}}) {
+func (viewUtils *{{.StructName}}ViewUtils) Page2Data(pageInfo *{{.StructName}}PageView) (err error, data *model.{{.StructName}}, page *common.PageInfo) {
+    defer func() {
+        if e := recover(); e != nil {
+            err = fmt.Errorf("{{.StructName}}ViewUtils View2Data error: %v", e)
+            global.Logger.Error("{{.StructName}}ViewUtils.View2Data:格式转换异常",
+            zap.Any("error", e))
+        }
+    }()
+    // TODO 按需修改
+    var tmp model.{{.StructName}}
+    {{range .Table.Columns}}
+        tmp.{{.FieldName}} = pageInfo.{{.FieldName}}
+    {{end}}
+    data = &tmp
+    page = &common.PageInfo{
+        PageSize:      pageInfo.PageSize,
+        PageNum:       pageInfo.PageNum,
+        OrderByColumn: pageInfo.OrderByColumn,
+        IsAsc:         pageInfo.IsAsc,
+    }
+    return
+}
+
+func (viewUtils *{{.StructName}}ViewUtils) View2DataList(viewList *[]{{.StructName}}View) (err error, dataList *[]model.{{.StructName}}) {
     defer func() {
         if e := recover(); e != nil {
             err = fmt.Errorf("{{.StructName}}ViewUtils View2DataList error: %v", e)
@@ -60,7 +84,7 @@ func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) View2DataList(viewList
         var dataTmpList []model.{{.StructName}}
         for i := range *dataList {
             view := (*viewList)[i]
-            err, data := {{.ObjectName}}ViewUtils.View2Data(&view)
+            err, data := viewUtils.View2Data(&view)
             if err == nil {
                 dataTmpList = append(dataTmpList, *data)
             }
@@ -70,7 +94,7 @@ func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) View2DataList(viewList
     return
 }
 
-func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2ViewList(dataList *[]model.{{.StructName}}) (err error, viewList *[]{{.StructName}}View) {
+func (viewUtils *{{.StructName}}ViewUtils) Data2ViewList(dataList *[]model.{{.StructName}}) (err error, viewList *[]{{.StructName}}View) {
     defer func() {
         if e := recover(); e != nil {
             err = fmt.Errorf("{{.StructName}}ViewUtils Data2ViewList error: %v", e)
@@ -82,7 +106,7 @@ func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2ViewList(dataList
         var viewTmpList []{{.StructName}}View
         for i := range *dataList {
             data := (*dataList)[i]
-            err, view := {{.ObjectName}}ViewUtils.Data2View(&data)
+            err, view := viewUtils.Data2View(&data)
             if err == nil {
                 viewTmpList = append(viewTmpList, *view)
             }

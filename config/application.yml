@@ -20,7 +20,7 @@ database:
   host: 127.0.0.1
   port: 3306
   username: root
-  password: 123456
+  password: a123456
   db_name: manager
   table_prefix: ""
   log_mode: true

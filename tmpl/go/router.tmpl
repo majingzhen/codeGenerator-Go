@@ -29,6 +29,6 @@ func (r *{{.StructName}}Router) Init{{.StructName}}Router(Router *gin.RouterGrou
     }
     {
         {{.ObjectName}}RouterWithoutRecord.GET("get", {{.ObjectName}}Api.Get)   // 根据ID获取{{.StructName}}
-        {{.ObjectName}}RouterWithoutRecord.GET("find", {{.ObjectName}}Api.Find) // 获取{{.StructName}}列表
+        {{.ObjectName}}RouterWithoutRecord.GET("find", {{.ObjectName}}Api.List) // 获取{{.StructName}}列表
     }
 }

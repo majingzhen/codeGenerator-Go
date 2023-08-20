@@ -9,8 +9,17 @@ package {{.PackageName}}
 // {{.StructName}}View 结构体
 
 type {{.StructName}}View struct {
-    {{range .Table.Columns}}
-        {{.FieldName}} {{if eq .FieldType "time.Time"}} string {{else}} {{.FieldType}} {{end}} `json:"{{.JsonField}}"`
+    {{range .Table.Columns}}{{.FieldName}} {{if eq .FieldType "time.Time"}} string {{else}} {{.FieldType}} {{end}} `json:"{{.JsonField}}" form:"{{.JsonField}}"`
     {{end}}
 }
 
+
+type {{.StructName}}PageView struct {
+    // TODO 按需修改
+    {{range .Table.Columns}}{{.FieldName}} {{if eq .FieldType "time.Time"}} string {{else}} {{.FieldType}} {{end}} `json:"{{.JsonField}}" form:"{{.JsonField}}"`
+    {{end}}
+    OrderByColumn string `json:"orderByColumn" form:"orderByColumn"` //排序字段
+    IsAsc         string `json:"isAsc" form:"isAsc"`         //排序方式
+    PageNum       int    `json:"pageNum" form:"pageNum"`     //当前页码
+    PageSize      int    `json:"pageSize" form:"pageSize"`   //每页数
+}
