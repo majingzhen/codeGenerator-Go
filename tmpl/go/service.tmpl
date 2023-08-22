@@ -7,6 +7,7 @@
 package {{.PackageName}}
 
 import (
+    "errors"
     "{{.ImportPath}}/common"
     "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/model"
     "{{.ImportPath}}/{{.CodePath}}/{{.ModuleName}}/{{.FileName}}/service/view"
@@ -18,43 +19,31 @@ type {{.StructName}}Service struct {}
 
 // Create 创建{{.StructName}}记录
 // Author {{.Author}}
-func (service *{{.StructName}}Service) Create({{.ObjectName}}View *view.{{.StructName}}View) (err error) {
-    err1, {{.ObjectName}} := viewUtils.View2Data({{.ObjectName}}View)
-    if err1 != nil {
-        return err1
-    }
-    err2 := {{.ObjectName}}Dao.Create(*{{.ObjectName}})
-    if err2 != nil {
-        return err2
-    }
-        return nil
-    }
-
-// Delete 删除{{.StructName}}记录
-// Author {{.Author}}
-func (service *{{.StructName}}Service) Delete(id string) (err error) {
-    err = {{.ObjectName}}Dao.Delete(id)
+func (service *{{.StructName}}Service) Create({{.ObjectName}}View *view.{{.StructName}}View) error {
+    if err, {{.ObjectName}} := viewUtils.View2Data({{.ObjectName}}View); err != nil {
         return err
+    } else {
+        return {{.ObjectName}}Dao.Create(*{{.ObjectName}})
     }
+}
 
 // DeleteByIds 批量删除{{.StructName}}记录
 // Author {{.Author}}
 func (service *{{.StructName}}Service) DeleteByIds(ids []string) (err error) {
     err = {{.ObjectName}}Dao.DeleteByIds(ids)
-        return err
-    }
+    return err
+}
 
 // Update 更新{{.StructName}}记录
 // Author {{.Author}}
-func (service *{{.StructName}}Service) Update(id string, {{.ObjectName}}View *view.{{.StructName}}View) (err error) {
+func (service *{{.StructName}}Service) Update(id string, {{.ObjectName}}View *view.{{.StructName}}View) error {
     {{.ObjectName}}View.Id = id
-    err1, {{.ObjectName}} := viewUtils.View2Data({{.ObjectName}}View)
-    if err1 != nil {
-        return err1
-    }
-    err = {{.ObjectName}}Dao.Update(*{{.ObjectName}})
+    if err, {{.ObjectName}} := viewUtils.View2Data({{.ObjectName}}View); err != nil {
         return err
+    } else {
+        return {{.ObjectName}}Dao.Update(*{{.ObjectName}})
     }
+}
 
 // Get 根据id获取{{.StructName}}记录
 // Author {{.Author}}
@@ -63,31 +52,46 @@ func (service *{{.StructName}}Service) Get(id string) (err error, {{.ObjectName}
     if err1 != nil {
         return err1, nil
     }
-    err2, {{.ObjectName}}View := viewUtils.Data2View({{.ObjectName}})
-    if err2 != nil {
-        return err2, nil
-    }
-        return
+    err, {{.ObjectName}}View = viewUtils.Data2View({{.ObjectName}})
+    return
 }
 
-// List 分页获取{{.StructName}}记录
+
+// Page 分页获取{{.StructName}}记录
 // Author {{.Author}}
-func (service *{{.StructName}}Service) List(pageInfo *view.{{.StructName}}PageView) (err error, res *common.PageInfo) {
+func (service *{{.StructName}}Service) Page(pageInfo *view.{{.StructName}}PageView) (err error, res *common.PageInfo) {
     err, param, page := viewUtils.Page2Data(pageInfo)
     if err != nil {
         return err, nil
     }
-    err1, datas, total := {{.ObjectName}}Dao.List(param, page)
+    err1, datas, total := {{.ObjectName}}Dao.Page(param, page)
     if err1 != nil {
         return err1, res
     }
-    err2, viewList := viewUtils.Data2ViewList(datas)
-    if err2 != nil {
+    if err2, viewList := viewUtils.Data2ViewList(datas); err2 != nil {
         return err2, res
+    } else {
+        res = &common.PageInfo{
+            Total: total,
+            Rows:  viewList,
+        }
+        return err, res
     }
-    res = &common.PageInfo{
-        Total: total,
-        Rows:  viewList,
+
+}
+
+// List 获取{{.StructName}}列表
+// Author {{.Author}}
+func (service *{{.StructName}}Service) List(v *view.{{.StructName}}View) (err error, views *[]view.{{.StructName}}View) {
+    err, data := viewUtils.View2Data(v)
+    if err != nil {
+        return err, nil
     }
-    return err, res
+    var datas *[]model.{{.StructName}}
+    if err, datas = {{.ObjectName}}Dao.List(data); err != nil {
+        return err, nil
+    } else {
+        err, views = viewUtils.Data2ViewList(datas)
+        return
+    }
 }

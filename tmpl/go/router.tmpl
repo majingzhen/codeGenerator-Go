@@ -18,17 +18,16 @@ var {{.ObjectName}}Api = api.{{.StructName}}ApiApp
 
 // Init{{.StructName}}Router 初始化 {{.StructName}} 路由信息
 func (r *{{.StructName}}Router) Init{{.StructName}}Router(Router *gin.RouterGroup) {
-    {{.ObjectName}}Router := Router.Group("{{.ObjectName}}")
-    {{.ObjectName}}Router.Use(middleware.JWTAuthFilter())
-    {{.ObjectName}}RouterWithoutRecord := Router.Group("{{.ObjectName}}")
+    {{.ObjectName}}Router := Router.Group("{{.ObjectName}}").Use(middleware.JWTAuthFilter())
+    {{.ObjectName}}RouterWithoutRecord := Router.Group("{{.ObjectName}}").Use(middleware.JWTAuthFilter())
     {
         {{.ObjectName}}Router.POST("create", {{.ObjectName}}Api.Create)             // 新建{{.StructName}}
-        {{.ObjectName}}Router.DELETE("delete", {{.ObjectName}}Api.Delete)           // 删除{{.StructName}}
-        {{.ObjectName}}Router.DELETE("deleteByIds", {{.ObjectName}}Api.DeleteByIds) // 批量删除{{.StructName}}
+        {{.ObjectName}}Router.DELETE("delete/:ids", {{.ObjectName}}Api.Delete)           // 删除{{.StructName}}
         {{.ObjectName}}Router.POST("update", {{.ObjectName}}Api.Update)              // 更新{{.StructName}}
     }
     {
-        {{.ObjectName}}RouterWithoutRecord.GET("get", {{.ObjectName}}Api.Get)   // 根据ID获取{{.StructName}}
-        {{.ObjectName}}RouterWithoutRecord.GET("find", {{.ObjectName}}Api.List) // 获取{{.StructName}}列表
+        {{.ObjectName}}RouterWithoutRecord.GET("get/:id", {{.ObjectName}}Api.Get)   // 根据ID获取{{.StructName}}
+        {{.ObjectName}}RouterWithoutRecord.GET("page", {{.ObjectName}}Api.Page) // 分页获取{{.StructName}}列表
+        {{.ObjectName}}RouterWithoutRecord.GET("list", {{.ObjectName}}Api.List) // 分页获取{{.StructName}}列表
     }
 }

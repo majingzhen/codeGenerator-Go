@@ -15,6 +15,7 @@ import (
     response "{{.ImportPath}}/common/response"
     "{{.ImportPath}}/global"
     "{{.ImportPath}}/utils"
+    "strings"
 )
 
 type {{.StructName}}Api struct {
@@ -31,6 +32,7 @@ func (api *{{.StructName}}Api) Create(c *gin.Context) {
     {{.ObjectName}}View.Id = utils.GenUID()
     {{.ObjectName}}View.CreateTime = utils.GetCurTimeStr()
     {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
+    {{.ObjectName}}View.CreateBy = framework.GetLoginUserName(c)
     if err := {{.ObjectName}}Service.Create(&{{.ObjectName}}View); err != nil {
     global.Logger.Error("创建失败!", zap.Error(err))
     response.FailWithMessage("创建失败", c)
@@ -43,27 +45,13 @@ func (api *{{.StructName}}Api) Create(c *gin.Context) {
 // @Summary 删除{{.StructName}}
 // @Router /{{.ObjectName}}/delete [delete]
 func (api *{{.StructName}}Api) Delete(c *gin.Context) {
-    var id common.Id
-    _ = c.ShouldBindJSON(&id)
-    if err := {{.ObjectName}}Service.Delete(id.ID); err != nil {
-    global.Logger.Error("删除失败!", zap.Error(err))
-    response.FailWithMessage("删除失败", c)
+    idStr := c.Param("ids")
+    ids := strings.Split(idStr, ",")
+    if err := {{.ObjectName}}Service.DeleteByIds(ids); err != nil {
+        global.Logger.Error("删除失败!", zap.Error(err))
+        response.FailWithMessage("删除失败", c)
     } else {
-    response.OkWithMessage("删除成功", c)
-    }
-}
-
-// DeleteByIds 批量删除{{.StructName}}
-// @Summary 批量删除{{.StructName}}
-// @Router /{{.ObjectName}}/deleteByIds [delete]
-func (api *{{.StructName}}Api) DeleteByIds(c *gin.Context) {
-    var ids common.Ids
-    _ = c.ShouldBindJSON(&ids)
-    if err := {{.ObjectName}}Service.DeleteByIds(ids.Ids); err != nil {
-    global.Logger.Error("批量删除失败!", zap.Error(err))
-    response.FailWithMessage("批量删除失败", c)
-    } else {
-    response.OkWithMessage("批量删除成功", c)
+        response.OkWithMessage("删除成功", c)
     }
 }
 
@@ -78,6 +66,7 @@ func (api *{{.StructName}}Api) Update(c *gin.Context) {
         response.FailWithMessage("更新失败", c)
     }
     {{.ObjectName}}View.UpdateTime = utils.GetCurTimeStr()
+    {{.ObjectName}}View.UpdateBy = framework.GetLoginUserName(c)
     if err := {{.ObjectName}}Service.Update(id, &{{.ObjectName}}View); err != nil {
     global.Logger.Error("更新持久化失败!", zap.Error(err))
         response.FailWithMessage("更新失败", c)
@@ -90,27 +79,46 @@ func (api *{{.StructName}}Api) Update(c *gin.Context) {
 // @Summary 用id查询{{.StructName}}
 // @Router /{{.ObjectName}}/get [get]
 func (api *{{.StructName}}Api) Get(c *gin.Context) {
-    id := c.Query("id")
+    id := c.Param("id")
     if err, {{.ObjectName}}View := {{.ObjectName}}Service.Get(id); err != nil {
         global.Logger.Error("查询失败!", zap.Error(err))
         response.FailWithMessage("查询失败", c)
     } else {
-        response.OkWithData(gin.H{"{{.ObjectName}}View": {{.ObjectName}}View}, c)
+        response.OkWithData({{.ObjectName}}View, c)
     }
 }
 
-// List 分页获取{{.StructName}}列表
+// Page 分页获取{{.StructName}}列表
 // @Summary 分页获取{{.StructName}}列表
-// @Router /{{.ObjectName}}/list [get]
-func (api *{{.StructName}}Api) List(c *gin.Context) {
+// @Router /{{.ObjectName}}/page [get]
+func (api *{{.StructName}}Api) Page(c *gin.Context) {
     var pageInfo view.{{.StructName}}PageView
     // 绑定查询参数到 pageInfo
     if err := c.ShouldBindQuery(&pageInfo); err != nil {
         response.FailWithMessage("获取分页数据解析失败!", c)
     }
 
-    if err, res := {{.ObjectName}}Service.List(&pageInfo); err != nil {
+    if err, res := {{.ObjectName}}Service.Page(&pageInfo); err != nil {
         global.Logger.Error("获取分页信息失败!", zap.Error(err))
+        response.FailWithMessage("获取失败", c)
+    } else {
+        response.OkWithDetailed(res, "获取成功", c)
+    }
+}
+
+// List 获取{{.StructName}}列表
+// @Summary 获取{{.StructName}}列表
+// @Router /{{.ObjectName}}/list [get]
+func (api *{{.StructName}}Api) List(c *gin.Context) {
+    var view view.{{.StructName}}View
+    // 绑定查询参数到 view对象
+    if err := c.ShouldBindQuery(&view); err != nil {
+        response.FailWithMessage("获取参数解析失败!", c)
+    }
+    // 判断是否需要根据用户获取数据
+    // userId := framework.GetLoginUserId(c)
+    if err, res := {{.ObjectName}}Service.List(&view); err != nil {
+        global.Logger.Error("获取数据失败!", zap.Error(err))
         response.FailWithMessage("获取失败", c)
     } else {
         response.OkWithDetailed(res, "获取成功", c)

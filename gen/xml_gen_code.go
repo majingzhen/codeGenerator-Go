@@ -37,7 +37,6 @@ func GenLanguage(modules []model.Module) {
 		genCode(modules, "./tmpl/go/service.tmpl", "service", "_service", "", false, false)
 		genCode(modules, "./tmpl/go/service_init.tmpl", "service", "", "", true, false)
 		genCode(modules, "./tmpl/go/view.tmpl", "view", "_view", "service", false, false)
-		genCode(modules, "./tmpl/go/view_page.tmpl", "view", "_view_page", "service", false, false)
 		genCode(modules, "./tmpl/go/view_utils.tmpl", "view", "_view_utils", "service", false, false)
 		genCode(modules, "./tmpl/go/view_init.tmpl", "view", "", "service", true, false)
 		// 生成api

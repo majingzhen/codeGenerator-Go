@@ -82,7 +82,7 @@ func (viewUtils *{{.StructName}}ViewUtils) View2DataList(viewList *[]{{.StructNa
     }()
     if viewList != nil {
         var dataTmpList []model.{{.StructName}}
-        for i := range *dataList {
+        for i := range *viewList {
             view := (*viewList)[i]
             err, data := viewUtils.View2Data(&view)
             if err == nil {
