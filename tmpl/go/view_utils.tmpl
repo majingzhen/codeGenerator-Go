@@ -18,7 +18,7 @@ import (
 type {{.StructName}}ViewUtils struct { }
 
 
-func (viewUtils *{{.StructName}}ViewUtils) Data2View(data *model.{{.StructName}}) (err error, view *{{.StructName}}View) {
+func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2View(data *model.{{.StructName}}) (err error, view *{{.StructName}}View) {
     defer func() {
         if e := recover(); e != nil {
             err = fmt.Errorf("{{.StructName}}ViewUtils View2Data error: %v", e)
@@ -72,7 +72,7 @@ func (viewUtils *{{.StructName}}ViewUtils) Page2Data(pageInfo *{{.StructName}}Pa
     return
 }
 
-func (viewUtils *{{.StructName}}ViewUtils) View2DataList(viewList *[]{{.StructName}}View) (err error, dataList *[]model.{{.StructName}}) {
+func (viewUtils *{{.StructName}}ViewUtils) View2DataList(viewList []*{{.StructName}}View) (err error, dataList []*model.{{.StructName}}) {
     defer func() {
         if e := recover(); e != nil {
             err = fmt.Errorf("{{.StructName}}ViewUtils View2DataList error: %v", e)
@@ -81,20 +81,20 @@ func (viewUtils *{{.StructName}}ViewUtils) View2DataList(viewList *[]{{.StructNa
         }
     }()
     if viewList != nil {
-        var dataTmpList []model.{{.StructName}}
-        for i := range *viewList {
-            view := (*viewList)[i]
-            err, data := viewUtils.View2Data(&view)
+        var dataTmpList []*model.{{.StructName}}
+        for i := range viewList {
+            view := viewList[i]
+            err, data := viewUtils.View2Data(view)
             if err == nil {
-                dataTmpList = append(dataTmpList, *data)
+                dataTmpList = append(dataTmpList, data)
             }
         }
-        dataList = &dataTmpList
+        dataList = dataTmpList
     }
     return
 }
 
-func (viewUtils *{{.StructName}}ViewUtils) Data2ViewList(dataList *[]model.{{.StructName}}) (err error, viewList *[]{{.StructName}}View) {
+func ({{.ObjectName}}ViewUtils *{{.StructName}}ViewUtils) Data2ViewList(dataList []*model.{{.StructName}}) (err error, viewList []*{{.StructName}}View) {
     defer func() {
         if e := recover(); e != nil {
             err = fmt.Errorf("{{.StructName}}ViewUtils Data2ViewList error: %v", e)
@@ -103,15 +103,15 @@ func (viewUtils *{{.StructName}}ViewUtils) Data2ViewList(dataList *[]model.{{.St
         }
     }()
     if dataList != nil {
-        var viewTmpList []{{.StructName}}View
-        for i := range *dataList {
-            data := (*dataList)[i]
-            err, view := viewUtils.Data2View(&data)
+        var viewTmpList []*{{.StructName}}View
+        for i := range dataList {
+            data := dataList[i]
+            err, view := {{.ObjectName}}ViewUtils.Data2View(data)
             if err == nil {
-                viewTmpList = append(viewTmpList, *view)
+                viewTmpList = append(viewTmpList, view)
             }
         }
-        viewList = &viewTmpList
+        viewList = viewTmpList
     }
     return
 }

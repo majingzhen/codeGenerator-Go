@@ -82,12 +82,12 @@ func (service *{{.StructName}}Service) Page(pageInfo *view.{{.StructName}}PageVi
 
 // List 获取{{.StructName}}列表
 // Author {{.Author}}
-func (service *{{.StructName}}Service) List(v *view.{{.StructName}}View) (err error, views *[]view.{{.StructName}}View) {
+func (service *{{.StructName}}Service) List(v *view.{{.StructName}}View) (err error, views []*view.{{.StructName}}View) {
     err, data := viewUtils.View2Data(v)
     if err != nil {
         return err, nil
     }
-    var datas *[]model.{{.StructName}}
+    var datas []*model.{{.StructName}}
     if err, datas = {{.ObjectName}}Dao.List(data); err != nil {
         return err, nil
     } else {

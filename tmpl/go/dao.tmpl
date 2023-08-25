@@ -45,12 +45,12 @@ func (dao *{{.StructName}}Dao) Get(id string) (err error, {{.ObjectName}} *{{.St
 
 // Page 分页获取{{.StructName}}记录
 // Author {{.Author}}
-func (dao *{{.StructName}}Dao) Page(param *{{.StructName}}, page *common.PageInfo) (err error, datas *[]{{.StructName}}, total int64) {
+func (dao *{{.StructName}}Dao) Page(param *{{.StructName}}, page *common.PageInfo) (err error, datas []*{{.StructName}}, total int64) {
     // 创建model
     model := global.GOrmDao.Model(&{{.StructName}}{})
     // 如果有条件搜索 下方会自动创建搜索语句
     //if param.Id != "" {
-    //	model = model.Where("ID = ?", info.Id)
+    //	model = model.Where("ID = ?", param.Id)
     //}
     if err = model.Count(&total).Error; err != nil {
         return
@@ -61,23 +61,19 @@ func (dao *{{.StructName}}Dao) Page(param *{{.StructName}}, page *common.PageInf
     if page.OrderByColumn != "" {
         model.Order(page.OrderByColumn + " " + page.IsAsc + " ")
     }
-    var tmp []{{.StructName}}
-    err = model.Limit(page.Limit).Offset(page.Offset).Find(&tmp).Error
-    datas = &tmp
+    err = model.Limit(page.Limit).Offset(page.Offset).Find(&datas).Error
     return err, datas, total
 }
 
 // List 获取{{.StructName}}记录
 // Author {{.Author}}
-func (dao *{{.StructName}}Dao) List(data *{{.StructName}}) (err error, datas *[]{{.StructName}}) {
-    var rows []{{.StructName}}
+func (dao *{{.StructName}}Dao) List(data *{{.StructName}}) (err error, datas []*{{.StructName}}) {
     db := global.GOrmDao.Model(&{{.StructName}}{})
     // TODO 输入查询条件
     //if data.Id != "" {
     //    db.Where("id = ?", data.Id)
     //}
     db.Order("create_time desc")
-    err = db.Find(&rows).Error
-    datas = &rows
+    err = db.Find(&datas).Error
     return err, datas
 }
